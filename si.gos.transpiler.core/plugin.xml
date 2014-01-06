@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="si.gos.transpiler.core.transpiler" name="Transpiler" schema="schema/transpiler.exsd"/>
+
+   <extension
+         id="si.gos.transpiler.nature"
+         name="Transpiler Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="si.gos.transpiler.core.TranspilerNature">
+         </run>
+      </runtime>
+      <builder
+            id="si.gos.transpiler.builder.TranspilerBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="si.gos.transpiler.builder.TranspilerBuilder"
+         name="Transpiler Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="si.gos.transpiler.core.builder.TranspilerBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="si.gos.transpiler.core.transpiler">
+      <transpiler
+            class="si.gos.transpiler.core.transpiler.less.LessTranspiler"
+            cmd="%path% %options% %source% %destination%"
+            generic="false"
+            id="si.gos.transpiler.core.transpiler.less"
+            name="LESS"
+            path="lessc">
+      </transpiler>
+      <transpiler
+            class="si.gos.transpiler.core.transpiler.generic.GenericTranspiler"
+            generic="true"
+            id="si.gos.transpiler.core.transpiler.generic"
+            name="Generic">
+      </transpiler>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="si.gos.transpiler.core.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   
+</plugin>

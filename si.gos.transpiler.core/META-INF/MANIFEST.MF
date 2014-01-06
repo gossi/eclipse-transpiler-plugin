@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core
+Bundle-SymbolicName: si.gos.transpiler.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: si.gos.transpiler.core.TranspilerPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ javax.inject,
+ org.apache.commons.lang
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: si.gos.transpiler.core,
+ si.gos.transpiler.core.transpiler

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: si.gos.transpiler.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: si.gos.transpiler.ui.TranspilerUIPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ si.gos.transpiler.core,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.ide.application,
+ javax.inject,
+ si.gos.eclipseutils
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

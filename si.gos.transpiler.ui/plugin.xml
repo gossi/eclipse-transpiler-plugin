@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="si.gos.transpiler.ui.handler.ToggleTranspilerNatureHandler"
+            id="si.gos.transpiler.ui.addTranspilerSupport"
+            name="Add Transpiler Support">
+      </command>
+      <command
+            defaultHandler="si.gos.transpiler.ui.handler.ToggleTranspilerNatureHandler"
+            id="si.gos.transpiler.ui.removeTranspilerSupport"
+            name="Remove Transpiler Support">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="si.gos.transpiler.ui.addTranspilerSupport"
+               label="Add Transpiler Support"
+               style="push">
+            <visibleWhen checkEnabled="false">
+				<with variable="selection">
+	          		<iterate>
+	            		<not>
+	            			<test 
+	                    		value="si.gos.transpiler.nature"
+								property="org.eclipse.core.resources.projectNature">
+	                    	</test>
+	                    </not>
+	            	</iterate>
+	            </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="si.gos.transpiler.ui.removeTranspilerSupport"
+               label="Remove Transpiler Support"
+               style="push">
+            <visibleWhen checkEnabled="false">
+				<with variable="selection">
+	          		<iterate>
+	            		<test 
+                    		value="si.gos.transpiler.nature"
+							property="org.eclipse.core.resources.projectNature">
+                    	</test>
+	                </iterate>
+	            </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="si.gos.transpiler.ui.preferences.TranspilerPage"
+            id="si.gos.transpiler.ui.preferences.TranspilerPreferencePage"
+            name="Transpilers">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="si.gos.transpiler.ui.preferences.ProjectTranspilerPage"
+            id="si.gos.transpiler.ui.preferences.projectPropertyPage"
+            name="Transpilers">
+         <enabledWhen>
+         	<and>
+		        <instanceof
+		              value="org.eclipse.core.resources.IProject">
+		        </instanceof>
+            	<test 
+            		value="si.gos.transpiler.nature"
+					property="org.eclipse.core.resources.projectNature">
+            	</test>
+            </and>
+         </enabledWhen>
+      </page>
+   </extension>
+</plugin>
