@@ -1,8 +1,6 @@
 package si.gos.transpiler.ui.preferences;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,35 +25,28 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import si.gos.transpiler.core.TranspilerPlugin;
-import si.gos.transpiler.core.transpiler.ITranspilerManager;
-import si.gos.transpiler.core.transpiler.InstalledTranspiler;
+import si.gos.eclipse.widgets.helper.IWidgetFactory;
+import si.gos.eclipse.widgets.helper.WidgetFactory;
+import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.ui.TranspilerUIPlugin;
-import si.gos.transpiler.ui.controller.InstalledTranspilerController;
 import si.gos.transpiler.ui.controller.PathEntryController;
 import si.gos.transpiler.ui.dialogs.PathDialog;
-import si.gos.transpiler.ui.model.PathEntry;
+import si.gos.transpiler.ui.parts.ConfiguredTranspilerPart;
 
 public class ProjectTranspilerPage extends PropertyPage {
 	
 	public static final String ID = "si.gos.transpiler.ui.preferences.projectPropertyPage";
 	
-	private Table transpilerTable;
 	private Table pathTable;
-	private TableViewer transpilerViewer;
 	private TableViewer paths;
-	
-	private Button removeTranspilerButton;
 	private Button editPathButton;
 	private Button removePathButton;
-	
 	private PathEntryController pathController;
 	
-	private Map<String, InstalledTranspiler> transpilers = new HashMap<String, InstalledTranspiler>();
-	private ITranspilerManager manager = TranspilerPlugin.getDefault().getTranspilerManager();
+	private ConfiguredTranspilerPart configuredTranspilerPart;
+	
 	private IProject project;
 
 	public ProjectTranspilerPage() {
@@ -65,15 +56,15 @@ public class ProjectTranspilerPage extends PropertyPage {
 		ISelectionService ss = TranspilerUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 		ISelection sel = ss.getSelection();
 		Object selectedObject = sel;
-        
-		if (sel instanceof IStructuredSelection) {
-        	selectedObject = ((IStructuredSelection)sel).getFirstElement();
-        }
 
-        if (selectedObject instanceof IAdaptable) {
-        	IResource res = (IResource) ((IAdaptable) selectedObject).getAdapter(IResource.class);
-        	project = res.getProject();
-        }
+		if (sel instanceof IStructuredSelection) {
+			selectedObject = ((IStructuredSelection)sel).getFirstElement();
+		}
+
+		if (selectedObject instanceof IAdaptable) {
+			IResource res = (IResource) ((IAdaptable) selectedObject).getAdapter(IResource.class);
+			project = res.getProject();
+		}
 	}
 
 	protected Control createContents(Composite parent) {
@@ -84,62 +75,17 @@ public class ProjectTranspilerPage extends PropertyPage {
 		gl_composite.marginHeight = 0;
 		gl_composite.horizontalSpacing = 0;
 		composite.setLayout(gl_composite);
-		
+
+		// left
 		Composite left = new Composite(composite, SWT.NONE);
 		left.setLayout(new GridLayout(2, false));
 		GridData gd_left = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_left.minimumWidth = 200;
 		left.setLayoutData(gd_left);
-		
-		final InstalledTranspilerController itpController = new InstalledTranspilerController();
-		transpilerViewer = new TableViewer(left, SWT.BORDER | SWT.FULL_SELECTION);
-		transpilerTable = transpilerViewer.getTable();
-		transpilerTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		transpilerViewer.setContentProvider(itpController);
-		transpilerViewer.setLabelProvider(itpController);
-		transpilerViewer.setInput(getInstalledTranspiler());
-		transpilerViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				removeTranspilerButton.setEnabled(!event.getSelection().isEmpty());
-			}
-		});
-		
-		Composite transpilerActions = new Composite(left, SWT.NONE);
-		transpilerActions.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		GridLayout gl_transpilerActions = new GridLayout(1, false);
-		gl_transpilerActions.marginWidth = 0;
-		gl_transpilerActions.marginHeight = 0;
-		gl_transpilerActions.verticalSpacing = 0;
-		gl_transpilerActions.horizontalSpacing = 0;
-		transpilerActions.setLayout(gl_transpilerActions);
-		
-		Button addTranspilerButton = new Button(transpilerActions, SWT.NONE);
-		addTranspilerButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		addTranspilerButton.setText("Add");
-		addTranspilerButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				ElementListSelectionDialog diag = new ElementListSelectionDialog(getShell(), itpController);
-				diag.setTitle("Select Installed Transpiler");
-				diag.setElements(manager.getInstalledTranspilers().values().toArray());
-				if (diag.open() == Dialog.OK) {
-					addTranspiler((InstalledTranspiler) diag.getFirstResult());
-					transpilerViewer.refresh();
-				}
-			}
-		});
-		
-		removeTranspilerButton = new Button(transpilerActions, SWT.NONE);
-		removeTranspilerButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		removeTranspilerButton.setText("Remove");
-		removeTranspilerButton.setEnabled(false);
-		removeTranspilerButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = (IStructuredSelection)transpilerViewer.getSelection();
-				removeTranspiler((InstalledTranspiler) sel.getFirstElement());
-				transpilerViewer.refresh();
-			}
-		});
-		
+
+		IWidgetFactory factory = new WidgetFactory(); 
+		configuredTranspilerPart = new ConfiguredTranspilerPart(project);
+		configuredTranspilerPart.createControl(left, SWT.DEFAULT, 0, factory);
 		
 		// right
 		Composite right = new Composite(composite, SWT.NONE);
@@ -243,15 +189,10 @@ public class ProjectTranspilerPage extends PropertyPage {
 		return null;
 	}
 	
-	private Map<String, InstalledTranspiler> getInstalledTranspiler() {
-		return transpilers;
-	}
-	
-	private void addTranspiler(InstalledTranspiler transpiler) {
-		transpilers.put(transpiler.getId(), transpiler);
-	}
-	
-	private void removeTranspiler(InstalledTranspiler transpiler) {
-		transpilers.remove(transpiler.getId());
+	@Override
+	public boolean performOk() {
+		configuredTranspilerPart.saveTranspilers();
+		
+		return true;
 	}
 }

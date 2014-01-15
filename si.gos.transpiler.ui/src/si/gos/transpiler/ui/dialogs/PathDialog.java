@@ -21,10 +21,10 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import si.gos.eclipseutils.dialogs.ResourceFileSelectionDialog;
+import si.gos.eclipse.dialogs.ResourceFileSelectionDialog;
+import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.ui.TranspilerUIPluginImages;
 import si.gos.transpiler.ui.internal.filter.TypedViewerFilter;
-import si.gos.transpiler.ui.model.PathEntry;
 
 public class PathDialog extends Dialog {
 	private Text source;

@@ -11,8 +11,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 
+import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.ui.TranspilerUIPluginImages;
-import si.gos.transpiler.ui.model.PathEntry;
 
 public class PathEntryController extends LabelProvider implements
 		IStructuredContentProvider, ITableLabelProvider {

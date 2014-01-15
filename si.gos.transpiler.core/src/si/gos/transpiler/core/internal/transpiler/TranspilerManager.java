@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -13,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 
 import si.gos.transpiler.core.TranspilerPlugin;
+import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.core.preferences.PreferenceConstants;
 import si.gos.transpiler.core.transpiler.AbstractTranspiler;
 import si.gos.transpiler.core.transpiler.ITranspiler;
@@ -86,6 +88,14 @@ public class TranspilerManager implements ITranspilerManager {
 	@Override
 	public Map<String, InstalledTranspiler> getInstalledTranspilers() {
 		return installedTranspilers;
+	}
+	
+	public InstalledTranspiler getInstalledTranspiler(String id) {
+		if (installedTranspilers.containsKey(id)) {
+			return installedTranspilers.get(id);
+		}
+		
+		return null;
 	}
 
 	public void addInstalledTranspiler(InstalledTranspiler transpiler) {
@@ -163,6 +173,43 @@ public class TranspilerManager implements ITranspilerManager {
 			String list = StringUtils.join(installedTranspilers.keySet().toArray(new String[]{}));
 			store.putValue(PreferenceConstants.TRANSPILERS, list);
 		
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Map<String, ConfiguredTranspiler> getConfiguredTranspilers(IProject project) {
+		IEclipsePreferences prefs = TranspilerPlugin.getDefault().getProjectPreferences(project);
+		String list = prefs.get(PreferenceConstants.TRANSPILERS, "");
+		String[] ids = new String[]{};
+		if (!list.equals("")) {
+			ids = list.split(","); 
+		}
+		
+		Map<String, ConfiguredTranspiler> ctps = new HashMap<String, ConfiguredTranspiler>();
+		for (String id : ids) {
+			ConfiguredTranspiler ctp = new ConfiguredTranspiler();
+			ctp.setInstalledTranspiler(getInstalledTranspiler(id));
+			
+			// load paths
+			
+			// load options
+			
+			ctps.put(ctp.getId(), ctp);
+		}
+		
+		return ctps;
+	}
+
+	@Override
+	public void saveConfiguredTranspilers(IProject project, Map<String, ConfiguredTranspiler> configuredTranspilers) {
+		IEclipsePreferences prefs = TranspilerPlugin.getDefault().getProjectPreferences(project);
+		prefs.put(PreferenceConstants.TRANSPILERS, StringUtils.join(configuredTranspilers.keySet().toArray(new String[]{})));
+		
+		// save
+		try {
+			prefs.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}

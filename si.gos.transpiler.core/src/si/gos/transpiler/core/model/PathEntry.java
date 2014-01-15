@@ -1,4 +1,4 @@
-package si.gos.transpiler.ui.model;
+package si.gos.transpiler.core.model;
 
 import org.eclipse.core.resources.IResource;
 
