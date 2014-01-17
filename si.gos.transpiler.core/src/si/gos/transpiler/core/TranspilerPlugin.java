@@ -2,8 +2,8 @@ package si.gos.transpiler.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -80,10 +80,10 @@ public class TranspilerPlugin extends AbstractUIPlugin {
 	}
 	
 	public IEclipsePreferences getPreferences() {
-		return ConfigurationScope.INSTANCE.getNode(PLUGIN_ID);
+		return InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 	}
 	
 	public IEclipsePreferences getPreferences(String path) {
-		return ConfigurationScope.INSTANCE.getNode(PLUGIN_ID + "/" + path);
+		return InstanceScope.INSTANCE.getNode(PLUGIN_ID + "/" + path);
 	}
 }

@@ -1,6 +1,8 @@
 package si.gos.transpiler.core.internal.transpiler;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +17,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import si.gos.transpiler.core.TranspilerPlugin;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
+import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.core.preferences.PreferenceConstants;
 import si.gos.transpiler.core.transpiler.AbstractTranspiler;
 import si.gos.transpiler.core.transpiler.ITranspiler;
@@ -29,6 +32,10 @@ public class TranspilerManager implements ITranspilerManager {
 	private final static String NAME = "name";
 	private final static String PATH = "path";
 	private final static String CMD = "cmd";
+	
+	private final static String PATHS = "paths";
+	private final static String PATH_SEPARATOR = ":";
+	private final static String RESOURCE_SEPARATOR = "::";
 
 	private IEclipsePreferences prefs = TranspilerPlugin.getDefault().getPreferences();
 	private IPreferenceStore store = TranspilerPlugin.getDefault().getPreferenceStore();;
@@ -49,7 +56,7 @@ public class TranspilerManager implements ITranspilerManager {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(TRANSPILER_EXTENSION_POINT);
 		
-		Map<String, ITranspiler> transpilers = new HashMap<String, ITranspiler>();
+		Map<String, ITranspiler> transpilers = new LinkedHashMap<String, ITranspiler>();
 		for (IConfigurationElement element : elements) {
 			try {
 				Object transpiler = element.createExecutableExtension("class");
@@ -105,11 +112,14 @@ public class TranspilerManager implements ITranspilerManager {
 	public void removeInstalledTranspiler(InstalledTranspiler transpiler) {
 		installedTranspilers.remove(transpiler.getId());
 	}
-	
+
 	private Map<String, InstalledTranspiler> loadInstalledTranspilers() {
-		Map<String, InstalledTranspiler> transpilers = new HashMap<String, InstalledTranspiler>();
+		Map<String, InstalledTranspiler> transpilers = new LinkedHashMap<String, InstalledTranspiler>();
 		for (String id : getInstalledTranspilerIds()) {
-			transpilers.put(id, loadInstalledTranspiler(id));
+			InstalledTranspiler itp = loadInstalledTranspiler(id);
+			if (itp != null) {
+				transpilers.put(id, itp);
+			}
 		}
 		
 		return transpilers;
@@ -170,7 +180,7 @@ public class TranspilerManager implements ITranspilerManager {
 			}
 
 			// save list
-			String list = StringUtils.join(installedTranspilers.keySet().toArray(new String[]{}));
+			String list = StringUtils.join(installedTranspilers.keySet().toArray(new String[]{}), ',');
 			store.putValue(PreferenceConstants.TRANSPILERS, list);
 		
 		} catch (BackingStoreException e) {
@@ -187,12 +197,24 @@ public class TranspilerManager implements ITranspilerManager {
 			ids = list.split(","); 
 		}
 		
-		Map<String, ConfiguredTranspiler> ctps = new HashMap<String, ConfiguredTranspiler>();
+		Map<String, ConfiguredTranspiler> ctps = new LinkedHashMap<String, ConfiguredTranspiler>();
 		for (String id : ids) {
 			ConfiguredTranspiler ctp = new ConfiguredTranspiler();
 			ctp.setInstalledTranspiler(getInstalledTranspiler(id));
 			
 			// load paths
+			String root = PreferenceConstants.TRANSPILERS + "/" + id;
+			IEclipsePreferences tp = (IEclipsePreferences)prefs.node(root);
+			String paths = tp.get(PATHS, "");
+			
+			if (paths.length() > 0) {
+				String resources[] = paths.split(RESOURCE_SEPARATOR);
+			
+				for (String resource : resources) {
+					String parts[] = resource.split(PATH_SEPARATOR);
+					ctp.addPath(new PathEntry(project.findMember(parts[0]), project.findMember(parts[1])));
+				}
+			}
 			
 			// load options
 			
@@ -205,10 +227,26 @@ public class TranspilerManager implements ITranspilerManager {
 	@Override
 	public void saveConfiguredTranspilers(IProject project, Map<String, ConfiguredTranspiler> configuredTranspilers) {
 		IEclipsePreferences prefs = TranspilerPlugin.getDefault().getProjectPreferences(project);
-		prefs.put(PreferenceConstants.TRANSPILERS, StringUtils.join(configuredTranspilers.keySet().toArray(new String[]{})));
+		prefs.put(PreferenceConstants.TRANSPILERS, StringUtils.join(configuredTranspilers.keySet().toArray(new String[]{}), ','));
 		
 		// save
 		try {
+			for (ConfiguredTranspiler ctp : configuredTranspilers.values()) {
+				String root = PreferenceConstants.TRANSPILERS + "/" + ctp.getId();
+				IEclipsePreferences tp = (IEclipsePreferences)prefs.node(root);
+				
+				// paths
+				List<String> resources = new LinkedList<String>();
+				
+				for (PathEntry path : ctp.getPaths()) {
+					resources.add(path.getSource().getProjectRelativePath() + PATH_SEPARATOR + path.getDestination().getProjectRelativePath());
+				}
+				
+				tp.put(PATHS, StringUtils.join(resources, RESOURCE_SEPARATOR));
+				
+				// options
+			}
+			
 			prefs.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();

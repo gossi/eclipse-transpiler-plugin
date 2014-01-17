@@ -52,10 +52,6 @@ public class ConfiguredTranspilerPart extends TableCRUDPart {
 		return viewer;
 	}
 	
-	public void setInput(Object input) {
-		getTableViewer().setInput(input);
-	}
-	
 	@Override
 	protected void handleAdd(IStructuredSelection selection) {
 		ElementListSelectionDialog diag = new ElementListSelectionDialog(getShell(), new InstalledTranspilerController());

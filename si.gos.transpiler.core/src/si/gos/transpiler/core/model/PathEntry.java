@@ -43,6 +43,4 @@ public class PathEntry {
 	public void setDestination(IResource destination) {
 		this.destination = destination;
 	}
-	
-
 }

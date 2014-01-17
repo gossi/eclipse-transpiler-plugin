@@ -1,12 +1,15 @@
 package si.gos.transpiler.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
 public class ConfiguredTranspiler {
 
 	private InstalledTranspiler transpiler;
-	private PathEntry[] paths;
-	private ConfiguredOption[] options;
+	private List<PathEntry> paths = new ArrayList<PathEntry>();
+	private List<ConfiguredOption> options = new ArrayList<ConfiguredOption>();
 	
 	/**
 	 * @return the transpiler
@@ -33,5 +36,21 @@ public class ConfiguredTranspiler {
 			return transpiler.getId();
 		}
 		return null;
+	}
+	
+	public List<PathEntry> getPaths() {
+		return paths;
+	}
+	
+	public void setPaths(List<PathEntry> paths) {
+		this.paths = paths;
+	}
+	
+	public void addPath(PathEntry path) {
+		paths.add(path);
+	}
+	
+	public void removePath(PathEntry path) {
+		paths.remove(path);
 	}
 }
