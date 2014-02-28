@@ -109,21 +109,10 @@ You can use the following variables:
 
    <element name="option">
       <complexType>
+         <choice>
+            <element ref="value" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
          <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="title" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="short" type="string">
             <annotation>
                <documentation>
                   
@@ -140,12 +129,38 @@ You can use the following variables:
                <restriction base="string">
                   <enumeration value="boolean">
                   </enumeration>
-                  <enumeration value="string">
+                  <enumeration value="param">
                   </enumeration>
-                  <enumeration value="number">
+                  <enumeration value="enum">
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="short" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="value">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>

@@ -55,4 +55,8 @@ public abstract class AbstractTranspiler implements ITranspiler {
 	public boolean isGeneric() {
 		return generic;
 	}
+	
+	public List<Option> getOptions() {
+		return options;
+	}
 }

@@ -1,5 +1,7 @@
 package si.gos.transpiler.core.transpiler;
 
+import java.util.List;
+
 public interface ITranspiler {
 
 	public String getName();
@@ -11,4 +13,6 @@ public interface ITranspiler {
 	public String getId();
 	
 	public boolean isGeneric();
+	
+	public List<Option> getOptions();
 }

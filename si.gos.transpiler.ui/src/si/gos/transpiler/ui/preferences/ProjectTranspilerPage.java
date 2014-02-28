@@ -24,6 +24,7 @@ import si.gos.eclipse.widgets.helper.WidgetHelper;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.ui.TranspilerUIPlugin;
 import si.gos.transpiler.ui.parts.ConfiguredTranspilerPart;
+import si.gos.transpiler.ui.parts.OptionsPart;
 import si.gos.transpiler.ui.parts.PathEntryPart;
 
 public class ProjectTranspilerPage extends PropertyPage {
@@ -33,6 +34,8 @@ public class ProjectTranspilerPage extends PropertyPage {
 	private TabFolder tabFolder;
 	private ConfiguredTranspilerPart configuredTranspilerPart;
 	private PathEntryPart pathEntryPart;
+	private Composite optionContainer;
+	private Composite page;
 	
 	private IProject project;
 
@@ -55,36 +58,48 @@ public class ProjectTranspilerPage extends PropertyPage {
 	}
 
 	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NO_SCROLL);
-		composite.setLayout(new GridLayout(2, false));
-		WidgetHelper.setMargin(composite, 0, 0);
-		WidgetHelper.setSpacing(composite, 0, 0);
+		page = new Composite(parent, SWT.NO_SCROLL);
+		page.setLayout(new GridLayout(1, false));
+		WidgetHelper.setMargin(page, 0, 0);
+		WidgetHelper.setSpacing(page, 0, 0);
 
 		// left
-		Composite left = new Composite(composite, SWT.NONE);
+		Composite left = new Composite(page, SWT.NONE);
 		left.setLayout(new GridLayout(2, false));
 		GridData gd_left = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_left.minimumWidth = 200;
+		gd_left.minimumHeight = 80;
+		gd_left.heightHint = 80;
 		left.setLayoutData(gd_left);
 
 		IWidgetFactory factory = new WidgetFactory(); 
 		configuredTranspilerPart = new ConfiguredTranspilerPart(project);
 		configuredTranspilerPart.createControl(left, SWT.DEFAULT, 1, factory);
 		configuredTranspilerPart.addSelectionChangedListener(new ISelectionChangedListener() {
+			private ConfiguredTranspiler lastSelection = null;
+			
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection sel = (IStructuredSelection) e.getSelection();
 				tabFolder.setEnabled(!sel.isEmpty());
 				pathEntryPart.setEnabled(!sel.isEmpty());
+				
 				if (!sel.isEmpty()) {
-					pathEntryPart.setConfiguredTranspiler((ConfiguredTranspiler)sel.getFirstElement());
+					ConfiguredTranspiler ct = (ConfiguredTranspiler)sel.getFirstElement();
+					if (ct != lastSelection) {
+						pathEntryPart.setConfiguredTranspiler(ct);
+						updateOptions(ct);
+						lastSelection = ct;
+					}
 				} else {
 					pathEntryPart.setConfiguredTranspiler(null);
+					lastSelection = null;
 				}
+				 
 			}
 		});
 		
 		// right
-		Composite right = new Composite(composite, SWT.NONE);
+		Composite right = new Composite(page, SWT.NONE);
 		right.setLayout(new FillLayout(SWT.HORIZONTAL));
 		GridData gd_right = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_right.minimumWidth = 400;
@@ -99,14 +114,30 @@ public class ProjectTranspilerPage extends PropertyPage {
 		Composite pathsContainer = new Composite(tabFolder, SWT.NONE);
 		pathsContainer.setLayout(new GridLayout(2, false));
 		tbtmPaths.setControl(pathsContainer);
-		
+
 		pathEntryPart = new PathEntryPart(project);
 		pathEntryPart.createControl(pathsContainer, SWT.DEFAULT, 1, factory);
 		pathEntryPart.setEnabled(false);
 		
 		TabItem tbtmOptions = new TabItem(tabFolder, SWT.NONE);
 		tbtmOptions.setText("Options");
-		return composite;
+		
+		optionContainer = new Composite(tabFolder, SWT.NO_SCROLL);
+		optionContainer.setLayout(new GridLayout());
+		tbtmOptions.setControl(optionContainer);
+		
+		return page;
+	}
+	
+	private void updateOptions(ConfiguredTranspiler ct) {
+		// clean up
+		for (Control control : optionContainer.getChildren()) {
+			control.dispose();
+		}
+		
+		OptionsPart part = new OptionsPart(ct.getInstalledTranspiler().getTranspiler());
+		part.createContents(optionContainer);
+		page.layout(true, true);
 	}
 	
 	@Override

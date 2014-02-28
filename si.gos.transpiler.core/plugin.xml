@@ -36,6 +36,87 @@
             id="si.gos.transpiler.core.transpiler.less"
             name="LESS"
             path="lessc">
+         <option
+               description="Compress output by removing some whitespaces."
+               name="compress"
+               short="x"
+               type="boolean">
+         </option>
+         <option
+               description="Compress output using clean-css"
+               name="clean-css"
+               type="boolean">
+         </option>
+         <option
+               description="Set include paths. Separated by `:&apos;. Use `;&apos; on Windows."
+               name="include-path"
+               type="param">
+         </option>
+         <option
+               description="Outputs a v3 sourcemap to the filename (or output filename.map)"
+               name="source-map"
+               type="param">
+         </option>
+         <option
+               description="adds this path onto the sourcemap filename and less file paths"
+               name="source-map-rootpath"
+               type="param">
+         </option>
+         <option
+               description="Sets sourcemap base path, defaults to current working directory."
+               name="source-map-basepath"
+               type="param">
+         </option>
+         <option
+               description="puts the less files into the map instead of referencing them"
+               name="source-map-less-inline"
+               type="boolean">
+         </option>
+         <option
+               description="puts the map (and any less files) into the output css file"
+               name="source-map-map-inline"
+               type="boolean">
+         </option>
+         <option
+               description="the complete url and filename put in the less file"
+               name="source-map-url"
+               type="param">
+         </option>
+         <option
+               description="Set rootpath for url rewriting in relative imports and urls.&#x0A;                           Works with or without the relative-urls option."
+               name="rootpath"
+               short="rp"
+               type="param">
+         </option>
+         <option
+               name="relative-urls"
+               short="ru"
+               type="boolean">
+         </option>
+         <option
+               description="Turn on or off strict math, where in strict mode, math requires brackets. This option may default to on and then be removed in the future."
+               name="strict-math"
+               short="sm"
+               type="enum">
+            <value
+                  name="on">
+            </value>
+            <value
+                  name="off">
+            </value>
+         </option>
+         <option
+               description="Allow mixed units, e.g. 1px+1em or 1px*1px which have units that cannot be represented."
+               name="strict-units"
+               short="su"
+               type="enum">
+            <value
+                  name="on">
+            </value>
+            <value
+                  name="off">
+            </value>
+         </option>
       </transpiler>
       <transpiler
             class="si.gos.transpiler.core.transpiler.generic.GenericTranspiler"

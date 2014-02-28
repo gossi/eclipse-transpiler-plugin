@@ -1,13 +1,21 @@
 package si.gos.transpiler.core.transpiler;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class Option {
 
-	private String title;
+	public static final String TYPE_BOOLEAN = "boolean";
+	public static final String TYPE_PARAM = "param";
+	public static final String TYPE_ENUM = "enum";
+	
 	private String name;
 	private String shortName;
 	private String type;
+	private String description;
+	private List<String> values = new LinkedList<String>();
 	
 	public Option() {
 		
@@ -15,17 +23,14 @@ public class Option {
 	
 	public Option(IConfigurationElement config) {
 		name = config.getAttribute("name");
-		title = config.getAttribute("title");
+		description = config.getAttribute("description") == null ? "" : config.getAttribute("description");
 		shortName = config.getAttribute("short");
 		type = config.getAttribute("type");
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String title) {
-		this.title = title;
+		
+		IConfigurationElement[] valueNodes = config.getChildren("value");
+		for (IConfigurationElement v : valueNodes) {
+			values.add(v.getAttribute("name"));
+		}
 	}
 	
 	public String getName() {
@@ -51,4 +56,24 @@ public class Option {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	public List<String> getValues() {
+		return values;
+	}
+	
+	
 }
