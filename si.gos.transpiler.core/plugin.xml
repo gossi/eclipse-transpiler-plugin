@@ -83,7 +83,7 @@
                type="param">
          </option>
          <option
-               description="Set rootpath for url rewriting in relative imports and urls.&#x0A;                           Works with or without the relative-urls option."
+               description="Set rootpath for url rewriting in relative imports and urls. Works with or without the relative-urls option."
                name="rootpath"
                short="rp"
                type="param">

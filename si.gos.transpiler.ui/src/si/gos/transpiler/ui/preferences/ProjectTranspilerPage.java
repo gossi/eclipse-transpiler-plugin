@@ -8,6 +8,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,7 +37,8 @@ public class ProjectTranspilerPage extends PropertyPage {
 	private TabFolder tabFolder;
 	private ConfiguredTranspilerPart configuredTranspilerPart;
 	private PathEntryPart pathEntryPart;
-	private Composite optionContainer;
+	private ScrolledComposite optionContainer;
+	private TabItem optionItem;
 	private Composite page;
 	
 	private IProject project;
@@ -94,7 +98,6 @@ public class ProjectTranspilerPage extends PropertyPage {
 					pathEntryPart.setConfiguredTranspiler(null);
 					lastSelection = null;
 				}
-				 
 			}
 		});
 		
@@ -103,10 +106,26 @@ public class ProjectTranspilerPage extends PropertyPage {
 		right.setLayout(new FillLayout(SWT.HORIZONTAL));
 		GridData gd_right = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_right.minimumWidth = 400;
+		gd_right.heightHint = 350;
 		right.setLayoutData(gd_right);
 		
 		tabFolder = new TabFolder(right, SWT.NONE);
 		tabFolder.setEnabled(false);
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tabFolder.getSelection()[0] == optionItem) {
+					OptionsPart part = (OptionsPart)optionContainer.getData();
+					part.setWidth(optionContainer.getClientArea().width);
+					optionContainer.layout(true, true);
+					
+					Composite composite = (Composite)optionContainer.getContent();
+					composite.setSize(composite.computeSize(optionContainer.getClientArea().width, SWT.DEFAULT));
+					// second time to calculate out possible scrollbar
+					composite.setSize(composite.computeSize(optionContainer.getClientArea().width, SWT.DEFAULT));
+				}
+			}
+		});
 		
 		TabItem tbtmPaths = new TabItem(tabFolder, SWT.NONE);
 		tbtmPaths.setText("Paths");
@@ -119,12 +138,13 @@ public class ProjectTranspilerPage extends PropertyPage {
 		pathEntryPart.createControl(pathsContainer, SWT.DEFAULT, 1, factory);
 		pathEntryPart.setEnabled(false);
 		
-		TabItem tbtmOptions = new TabItem(tabFolder, SWT.NONE);
-		tbtmOptions.setText("Options");
+		optionItem = new TabItem(tabFolder, SWT.NONE);
+		optionItem.setText("Options");
 		
-		optionContainer = new Composite(tabFolder, SWT.NO_SCROLL);
+		optionContainer = new ScrolledComposite(tabFolder, SWT.H_SCROLL | SWT.V_SCROLL);
 		optionContainer.setLayout(new GridLayout());
-		tbtmOptions.setControl(optionContainer);
+		optionContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		optionItem.setControl(optionContainer);
 		
 		return page;
 	}
@@ -134,9 +154,11 @@ public class ProjectTranspilerPage extends PropertyPage {
 		for (Control control : optionContainer.getChildren()) {
 			control.dispose();
 		}
-		
+
 		OptionsPart part = new OptionsPart(ct.getInstalledTranspiler().getTranspiler());
-		part.createContents(optionContainer);
+		Composite composite = part.createContents(optionContainer);
+		optionContainer.setContent(composite);
+		optionContainer.setData(part);
 		page.layout(true, true);
 	}
 	
