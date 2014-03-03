@@ -122,7 +122,7 @@ public class OptionsPart {
 				if (paramObj != null) {
 					Text param = (Text)paramObj;
 					RowData pd = (RowData)param.getLayoutData();
-					pd.width = width - left - name.getSize().x - 20;
+					pd.width = width - left - name.getSize().x - 10;
 				}
 			}
 		});

@@ -9,6 +9,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -41,6 +43,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 	private TabItem optionItem;
 	private Composite page;
 	
+	private boolean resizing = false;
 	private IProject project;
 
 	public ProjectTranspilerPage() {
@@ -105,7 +108,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 		Composite right = new Composite(page, SWT.NONE);
 		right.setLayout(new FillLayout(SWT.HORIZONTAL));
 		GridData gd_right = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_right.minimumWidth = 400;
+		gd_right.minimumWidth = 440;
 		gd_right.heightHint = 350;
 		right.setLayoutData(gd_right);
 		
@@ -115,14 +118,9 @@ public class ProjectTranspilerPage extends PropertyPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tabFolder.getSelection()[0] == optionItem) {
-					OptionsPart part = (OptionsPart)optionContainer.getData();
-					part.setWidth(optionContainer.getClientArea().width);
 					optionContainer.layout(true, true);
 					
-					Composite composite = (Composite)optionContainer.getContent();
-					composite.setSize(composite.computeSize(optionContainer.getClientArea().width, SWT.DEFAULT));
-					// second time to calculate out possible scrollbar
-					composite.setSize(composite.computeSize(optionContainer.getClientArea().width, SWT.DEFAULT));
+					resize();
 				}
 			}
 		});
@@ -144,9 +142,25 @@ public class ProjectTranspilerPage extends PropertyPage {
 		optionContainer = new ScrolledComposite(tabFolder, SWT.H_SCROLL | SWT.V_SCROLL);
 		optionContainer.setLayout(new GridLayout());
 		optionContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		optionContainer.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				resize();
+			}
+		});
 		optionItem.setControl(optionContainer);
 		
 		return page;
+	}
+	
+	private void resize() {
+		if (!resizing) {
+			resizing = true;
+			Composite composite = (Composite)optionContainer.getContent();
+			composite.setSize(composite.computeSize(optionContainer.getClientArea().width, SWT.DEFAULT));
+			OptionsPart part = (OptionsPart)optionContainer.getData();
+			part.setWidth(optionContainer.getClientArea().width);
+			resizing = false;
+		}
 	}
 	
 	private void updateOptions(ConfiguredTranspiler ct) {
