@@ -33,6 +33,7 @@ public class TranspilerManager implements ITranspilerManager {
 	private final static String PATH = "path";
 	private final static String CMD = "cmd";
 	
+	private final static String OPTIONS = "options";
 	private final static String PATHS = "paths";
 	private final static String PATH_SEPARATOR = ":";
 	private final static String RESOURCE_SEPARATOR = "::";
@@ -201,10 +202,10 @@ public class TranspilerManager implements ITranspilerManager {
 		for (String id : ids) {
 			ConfiguredTranspiler ctp = new ConfiguredTranspiler();
 			ctp.setInstalledTranspiler(getInstalledTranspiler(id));
-			
-			// load paths
 			String root = PreferenceConstants.TRANSPILERS + "/" + id;
 			IEclipsePreferences tp = (IEclipsePreferences)prefs.node(root);
+			
+			// load paths
 			String paths = tp.get(PATHS, "");
 			
 			if (paths.length() > 0) {
@@ -217,7 +218,21 @@ public class TranspilerManager implements ITranspilerManager {
 			}
 			
 			// load options
+			String optionsString = tp.get(OPTIONS, "");
 			
+			if (paths.length() > 0) {
+				String options[] = optionsString.split(RESOURCE_SEPARATOR);
+			
+				for (String option : options) {
+					String parts[] = option.split("=");
+					ctp.setOption(parts[0]);
+					if (parts.length > 1) {
+						ctp.setOption(parts[0], parts[1]);	
+					}
+				}
+			}
+			
+			// add to collection
 			ctps.put(ctp.getId(), ctp);
 		}
 		
@@ -245,6 +260,19 @@ public class TranspilerManager implements ITranspilerManager {
 				tp.put(PATHS, StringUtils.join(resources, RESOURCE_SEPARATOR));
 				
 				// options
+				List<String> options = new LinkedList<String>();
+				
+				for (Map.Entry<String, String> option : ctp.getOptions().entrySet()) {
+					StringBuilder sb = new StringBuilder(option.getKey());
+					
+					if (!option.getValue().isEmpty()) {
+						sb.append("=" + option.getValue());
+					}
+					
+					options.add(sb.toString());
+				}
+				
+				tp.put(OPTIONS, StringUtils.join(options, RESOURCE_SEPARATOR));
 			}
 			
 			prefs.flush();

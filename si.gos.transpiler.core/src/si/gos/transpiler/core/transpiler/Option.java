@@ -71,8 +71,8 @@ public class Option {
 		this.description = description;
 	}
 	
-	public List<String> getValues() {
-		return values;
+	public String[] getValues() {
+		return values.toArray(new String[]{});
 	}
 	
 	

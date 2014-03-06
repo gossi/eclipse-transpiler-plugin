@@ -1,7 +1,9 @@
 package si.gos.transpiler.core.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
@@ -9,7 +11,9 @@ public class ConfiguredTranspiler {
 
 	private InstalledTranspiler transpiler;
 	private List<PathEntry> paths = new ArrayList<PathEntry>();
-	private List<ConfiguredOption> options = new ArrayList<ConfiguredOption>();
+//	private List<ConfiguredOption> options = new ArrayList<ConfiguredOption>();
+	private Map<String, String> options = new HashMap<String, String>();
+	
 	
 	/**
 	 * @return the transpiler
@@ -47,10 +51,36 @@ public class ConfiguredTranspiler {
 	}
 	
 	public void addPath(PathEntry path) {
+		path.setTranspiler(this);
 		paths.add(path);
 	}
 	
 	public void removePath(PathEntry path) {
+		path.setTranspiler(null);
 		paths.remove(path);
+	}
+	
+	public void setOption(String name) {
+		setOption(name, "");
+	}
+	
+	public void setOption(String name, String value) {
+		options.put(name, value);
+	}
+	
+	public boolean hasOption(String name) {
+		return options.containsKey(name);
+	}
+
+	public void removeOption(String name) {
+		options.remove(name);
+	}
+	
+	public String getOption(String name) {
+		return options.get(name);
+	}
+	
+	public Map<String, String> getOptions() {
+		return options;
 	}
 }

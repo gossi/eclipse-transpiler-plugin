@@ -27,7 +27,7 @@ public class TranspilerNature implements IProjectNature {
 		ICommand[] commands = desc.getBuildSpec();
 
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(TranspilerBuilder.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(TranspilerBuilder.ID)) {
 				return;
 			}
 		}
@@ -35,7 +35,7 @@ public class TranspilerNature implements IProjectNature {
 		ICommand[] newCommands = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCommands, 0, commands.length);
 		ICommand command = desc.newCommand();
-		command.setBuilderName(TranspilerBuilder.BUILDER_ID);
+		command.setBuilderName(TranspilerBuilder.ID);
 		newCommands[newCommands.length - 1] = command;
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);
@@ -50,7 +50,7 @@ public class TranspilerNature implements IProjectNature {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(TranspilerBuilder.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(TranspilerBuilder.ID)) {
 				ICommand[] newCommands = new ICommand[commands.length - 1];
 				System.arraycopy(commands, 0, newCommands, 0, i);
 				System.arraycopy(commands, i + 1, newCommands, i,

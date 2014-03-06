@@ -6,6 +6,7 @@ public class PathEntry {
 
 	private IResource source;
 	private IResource destination;
+	private ConfiguredTranspiler transpiler;
 	
 	public PathEntry() {
 		
@@ -43,4 +44,20 @@ public class PathEntry {
 	public void setDestination(IResource destination) {
 		this.destination = destination;
 	}
+
+	/**
+	 * @return the transpiler
+	 */
+	public ConfiguredTranspiler getTranspiler() {
+		return transpiler;
+	}
+
+	/**
+	 * @param transpiler the transpiler to set
+	 */
+	public void setTranspiler(ConfiguredTranspiler transpiler) {
+		this.transpiler = transpiler;
+	}
+	
+	
 }

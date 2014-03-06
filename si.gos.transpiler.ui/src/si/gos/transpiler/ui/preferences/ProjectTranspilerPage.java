@@ -169,7 +169,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 			control.dispose();
 		}
 
-		OptionsPart part = new OptionsPart(ct.getInstalledTranspiler().getTranspiler());
+		OptionsPart part = new OptionsPart(ct);
 		Composite composite = part.createContents(optionContainer);
 		optionContainer.setContent(composite);
 		optionContainer.setData(part);

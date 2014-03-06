@@ -6,25 +6,34 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import si.gos.eclipse.widgets.helper.WidgetHelper;
+import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.core.transpiler.ITranspiler;
 import si.gos.transpiler.core.transpiler.Option;
 
 public class OptionsPart {
 
+	private ConfiguredTranspiler confTranspiler;
 	private ITranspiler transpiler;
 	private Composite area;
 	private List<Composite> rows;
 	
-	public OptionsPart(ITranspiler transpiler) {
-		this.transpiler = transpiler;
+	public OptionsPart(ConfiguredTranspiler configuredTranspiler) {
+		this.transpiler = configuredTranspiler.getInstalledTranspiler().getTranspiler();
+		confTranspiler = configuredTranspiler;
 	}
 	
 	public Composite createContents(Composite parent) {
@@ -46,6 +55,7 @@ public class OptionsPart {
 	}
 	
 	private Composite createRow(Composite parent, final Option option) {
+		boolean hasOption = confTranspiler.hasOption(option.getName());
 		final Composite row = new Composite(parent, SWT.NO_SCROLL);
 		row.setLayout(new RowLayout());
 		RowData rd = new RowData();
@@ -57,6 +67,20 @@ public class OptionsPart {
 		
 		final Button enabled = new Button(row, SWT.CHECK);
 		row.setData("enabled", enabled);
+		if (hasOption) {
+			enabled.setSelection(true);
+		}
+		enabled.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (enabled.getSelection()) {
+					if (!confTranspiler.hasOption(option.getName())) {
+						confTranspiler.setOption(option.getName());
+					}
+				} else {
+					confTranspiler.removeOption(option.getName());
+				}
+			}
+		});
 		
 		Composite right = new Composite(row, SWT.NO_SCROLL);
 		RowLayout rlayout = new RowLayout();
@@ -89,8 +113,31 @@ public class OptionsPart {
 		final Label name = new Label(top, SWT.NONE); 
 		name.setText(sb.toString());
 		
-		if (option.getType().equals(Option.TYPE_PARAM)) {
-			Text param = new Text(top, SWT.SINGLE);
+		if (option.getType().equals(Option.TYPE_PARAM) || option.getType().equals(Option.TYPE_ENUM)) {
+			Control param = null;
+			
+			if (option.getType().equals(Option.TYPE_PARAM)) {
+				param = new Text(top, SWT.SINGLE);
+				if (hasOption) {
+					((Text)param).setText(confTranspiler.getOption(option.getName()));
+				}
+				((Text)param).addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						confTranspiler.setOption(option.getName(), ((Text)e.getSource()).getText());
+					}
+				});
+			} else if (option.getType().equals(Option.TYPE_ENUM)) {
+				param = new Combo(top, SWT.SINGLE | SWT.READ_ONLY);
+				((Combo)param).setItems(option.getValues());
+				if (hasOption) {
+					((Combo)param).setText(confTranspiler.getOption(option.getName()));
+				}
+				((Combo)param).addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						confTranspiler.setOption(option.getName(), ((Combo)e.getSource()).getText());
+					}
+				});
+			}
 			param.setLayoutData(new RowData());
 			row.setData("param", param);
 		}
@@ -120,7 +167,7 @@ public class OptionsPart {
 				// param
 				Object paramObj = row.getData("param");
 				if (paramObj != null) {
-					Text param = (Text)paramObj;
+					Control param = (Control)paramObj;
 					RowData pd = (RowData)param.getLayoutData();
 					pd.width = width - left - name.getSize().x - 10;
 				}
