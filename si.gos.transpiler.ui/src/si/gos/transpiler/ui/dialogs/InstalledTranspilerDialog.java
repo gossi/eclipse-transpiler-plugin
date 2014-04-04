@@ -9,6 +9,7 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -22,8 +23,9 @@ import si.gos.transpiler.core.TranspilerPlugin;
 import si.gos.transpiler.core.transpiler.ITranspiler;
 import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 import si.gos.transpiler.ui.controller.NonInstalledTranspilerController;
+import si.gos.transpiler.ui.controller.TranspilerController;
 
-public class TranspilerDialog extends Dialog {
+public class InstalledTranspilerDialog extends Dialog {
 	private Text cmd;
 	private Text path;
 	private Text name;
@@ -32,20 +34,21 @@ public class TranspilerDialog extends Dialog {
 	private boolean fillingFromPreset = false;
 	
 	private InstalledTranspiler transpiler;
+	private Text extension;
 
-	protected TranspilerDialog(IShellProvider parentShell, InstalledTranspiler transpiler) {
+	protected InstalledTranspilerDialog(IShellProvider parentShell, InstalledTranspiler transpiler) {
 		super(parentShell);
 		this.transpiler = transpiler;
 		editing = true;
 	}
 
-	public TranspilerDialog(Shell parentShell, InstalledTranspiler transpiler) {
+	public InstalledTranspilerDialog(Shell parentShell, InstalledTranspiler transpiler) {
 		super(parentShell);
 		this.transpiler = transpiler;
 		editing = true;
 	}
 	
-	protected TranspilerDialog(IShellProvider parentShell) {
+	protected InstalledTranspilerDialog(IShellProvider parentShell) {
 		super(parentShell);
 		transpiler = new InstalledTranspiler();
 	}
@@ -53,20 +56,32 @@ public class TranspilerDialog extends Dialog {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public TranspilerDialog(Shell parentShell) {
+	public InstalledTranspilerDialog(Shell parentShell) {
 		super(parentShell);
 		transpiler = new InstalledTranspiler();
+		
 	}
-
+	
+	@Override
+	protected Point getInitialSize() {
+		return getShell().computeSize(400, SWT.DEFAULT);
+	}
+	
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite grid = new Composite(parent, SWT.NO_SCROLL);
 		grid.setLayout(new GridLayout(2, false));
+		grid.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label lblTranspilers = new Label(grid, SWT.NONE);
 		lblTranspilers.setText("Transpiler");
 		
-		NonInstalledTranspilerController controller = new NonInstalledTranspilerController();
+		TranspilerController controller;
+		if (editing) {
+			controller = new TranspilerController();
+		} else {
+			controller = new NonInstalledTranspilerController();
+		}
 		ComboViewer comboViewer = new ComboViewer(grid, SWT.READ_ONLY);
 		Combo combo = comboViewer.getCombo();
 		combo.setEnabled(!editing);
@@ -81,6 +96,9 @@ public class TranspilerDialog extends Dialog {
 			}
 		});
 		
+		if (editing) {
+			combo.select(controller.indexOf(transpiler.getTranspiler()));
+		}
 		
 		Label lblName = new Label(grid, SWT.NONE);
 		lblName.setText("Name");
@@ -97,8 +115,19 @@ public class TranspilerDialog extends Dialog {
 			}
 		});
 		
+		Label lblExtension = new Label(grid, SWT.NONE);
+		lblExtension.setText("Extension");
+		
+		extension = new Text(grid, SWT.BORDER);
+		extension.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		extension.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				transpiler.setPath(extension.getText());
+			}
+		});
+		
 		Label lblPath = new Label(grid, SWT.NONE);
-		lblPath.setText("Path");
+		lblPath.setText("Executable");
 		
 		path = new Text(grid, SWT.BORDER);
 		path.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -121,13 +150,14 @@ public class TranspilerDialog extends Dialog {
 		new Label(grid, SWT.NONE);
 		
 		Label lblCmdDesc = new Label(grid, SWT.NONE);
-		lblCmdDesc.setText("Variables for use:\n\n%path% - The path to the executable\n%options% - Options to the executables\n%source% - The source path\n%destination% - The destination path");
+		lblCmdDesc.setText("Variables for use:\n\n$path - The path to the executable\n$options - Options to the executables\n$source - The source path\n$destination - The destination path");
 		
 		if (editing) {
 			setActiveTranspiler(transpiler.getTranspiler());
 		}
 		
-		return super.createDialogArea(parent);
+//		return super.createDialogArea(parent);
+		return grid;
 	}
 	
 	private void setActiveTranspiler(ITranspiler transpiler) {
@@ -136,15 +166,15 @@ public class TranspilerDialog extends Dialog {
 			name.setText(transpiler.getName());
 			fillingFromPreset = false;
 		}
-		path.setEnabled(!transpiler.isGeneric());
-		path.setText(transpiler.getPath());
-		cmd.setEnabled(transpiler.isGeneric());
+//		path.setEnabled(!transpiler.isGeneric());
+//		cmd.setEnabled(transpiler.isGeneric());
+		path.setText(this.transpiler.getPath());
 		cmd.setText(transpiler.getCmd());
+		extension.setText(transpiler.getExtension());
 		this.transpiler.setTranspiler(transpiler);
-		this.transpiler.setTranspilerId(transpiler.getId());
 	}
 
-	public InstalledTranspiler getTranspiler() {
+	public InstalledTranspiler getInstalledTranspiler() {
 		return transpiler;
 	}
 	

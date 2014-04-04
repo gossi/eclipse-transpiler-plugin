@@ -24,6 +24,22 @@ public class TranspilerController extends LabelProvider implements
 		return transpilers.values().toArray();
 	}
 	
+	public int indexOf(ITranspiler transpiler) {
+		if (!transpilers.containsValue(transpiler)) {
+			return -1;
+		}
+		
+		int index = 0;
+		for (ITranspiler tp : transpilers.values()) {
+			if (tp == transpiler) {
+				return index;
+			}
+			index++;
+		}
+		
+		return -1;
+	}
+	
 	@Override
 	public String getText(Object element) {
 		if (element instanceof ITranspiler) {

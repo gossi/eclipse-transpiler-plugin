@@ -30,12 +30,16 @@
    <extension
          point="si.gos.transpiler.core.transpiler">
       <transpiler
+            class="si.gos.transpiler.core.transpiler.generic.GenericTranspiler"
+            id="si.gos.transpiler.core.transpiler.generic"
+            name="Generic">
+      </transpiler>
+      <transpiler
             class="si.gos.transpiler.core.transpiler.less.LessTranspiler"
-            cmd="%path% %options% %source% %destination%"
-            generic="false"
+            cmd="$path $options $source $destination"
+            extension="less"
             id="si.gos.transpiler.core.transpiler.less"
-            name="LESS"
-            path="lessc">
+            name="LESS">
          <option
                description="Compress output by removing some whitespaces."
                name="compress"
@@ -119,10 +123,166 @@
          </option>
       </transpiler>
       <transpiler
-            class="si.gos.transpiler.core.transpiler.generic.GenericTranspiler"
-            generic="true"
-            id="si.gos.transpiler.core.transpiler.generic"
-            name="Generic">
+            class="si.gos.transpiler.core.transpiler.sass.SassTranspiler"
+            cmd="$path $options $source $destination"
+            extension="sass"
+            id="si.gos.transpiler.core.transpiler.sass"
+            name="SASS">
+         <option
+               description="Output style. Can be nested (default), compact, compressed, or expanded."
+               name="style"
+               short="t"
+               type="enum">
+            <value
+                  name="nested">
+            </value>
+            <value
+                  name="compact">
+            </value>
+            <value
+                  name="compressed">
+            </value>
+            <value
+                  name="expanded">
+            </value>
+         </option>
+         <option
+               description="How many digits of precision to use when outputting decimal numbers.Defaults to 5."
+               name="precision"
+               type="param">
+         </option>
+         <option
+               description="Make Compass imports available and load project configuration."
+               name="compass"
+               type="boolean">
+         </option>
+         <option
+               description="Add a sass import path."
+               name="load-path"
+               short="I"
+               type="param">
+         </option>
+         <option
+               description="Require a Ruby library before running Sass."
+               name="require"
+               short="r"
+               type="param">
+         </option>
+         <option
+               description="The path to put cached Sass files. Defaults to .sass-cache."
+               name="cache-location"
+               type="param">
+         </option>
+         <option
+               description="Don&apos;t cache to sassc files."
+               name="no-cache"
+               short="C"
+               type="boolean">
+         </option>
+         <option
+               description="Create sourcemap files next to the generated CSS files."
+               name="sourcemap"
+               type="boolean">
+         </option>
+         <option
+               description="Specify the default encoding for Sass files."
+               name="default-encoding"
+               short="E"
+               type="param">
+         </option>
+      </transpiler>
+      <transpiler
+            class="si.gos.transpiler.core.transpiler.scss.ScssTranspiler"
+            cmd="$path $options --scss $source $destination"
+            extension="scss"
+            id="si.gos.transpiler.core.transpiler.scss"
+            name="SCSS">
+         <option
+               description="Output style. Can be nested (default), compact, compressed, or expanded."
+               name="style"
+               short="t"
+               type="enum">
+            <value
+                  name="nested">
+            </value>
+            <value
+                  name="compact">
+            </value>
+            <value
+                  name="compressed">
+            </value>
+            <value
+                  name="expanded">
+            </value>
+         </option>
+         <option
+               description="How many digits of precision to use when outputting decimal numbers.Defaults to 5."
+               name="precision"
+               type="param">
+         </option>
+         <option
+               description="Make Compass imports available and load project configuration."
+               name="compass"
+               type="boolean">
+         </option>
+         <option
+               description="Add a sass import path."
+               name="load-path"
+               short="I"
+               type="param">
+         </option>
+         <option
+               description="Require a Ruby library before running Sass."
+               name="require"
+               short="r"
+               type="param">
+         </option>
+         <option
+               description="The path to put cached Sass files. Defaults to .sass-cache."
+               name="cache-location"
+               type="param">
+         </option>
+         <option
+               description="Don&apos;t cache to sassc files."
+               name="no-cache"
+               short="C"
+               type="boolean">
+         </option>
+         <option
+               description="Create sourcemap files next to the generated CSS files."
+               name="sourcemap"
+               type="boolean">
+         </option>
+         <option
+               description="Specify the default encoding for Sass files."
+               name="default-encoding"
+               short="E"
+               type="param">
+         </option>
+      </transpiler>
+      <transpiler
+            class="si.gos.transpiler.core.transpiler.coffeescript.CoffeeScriptTranspiler"
+            cmd="$path $options -o $destination $source"
+            extension="coffee"
+            id="si.gos.transpiler.core.transpiler.coffeescript"
+            name="CoffeeScript">
+         <option
+               description="compile without a top-level function wrapper"
+               name="bare"
+               short="b"
+               type="boolean">
+         </option>
+         <option
+               description="generate source map and save as .map files"
+               name="map"
+               short="m"
+               type="boolean">
+         </option>
+         <option
+               description="suppress the &quot;Generated by&quot; header"
+               name="no-header"
+               type="boolean">
+         </option>
       </transpiler>
    </extension>
    <extension

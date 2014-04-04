@@ -3,6 +3,7 @@ package si.gos.transpiler.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -43,7 +44,11 @@ public class ResourceLocator {
 			IPath resPath = res.getProjectRelativePath();
 
 			if (resPath.equals(path)) {
-				return pathEntry;
+				// extension check
+				if (res instanceof IFile 
+						|| resPath.getFileExtension().equals(pathEntry.getTranspiler().getInstalledTranspiler().getExtension())) {
+					return pathEntry;
+				}
 			}
 		}
 

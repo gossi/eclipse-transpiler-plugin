@@ -13,8 +13,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import si.gos.eclipse.parts.TableCRUDPart;
-import si.gos.eclipse.widgets.helper.IWidgetFactory;
+import si.gos.eclipse.parts.CrudConfig;
+import si.gos.eclipse.parts.TableCrudPart;
+import si.gos.eclipse.widgets.utils.IWidgetFactory;
 import si.gos.transpiler.core.TranspilerPlugin;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.core.transpiler.ITranspilerManager;
@@ -22,7 +23,7 @@ import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 import si.gos.transpiler.ui.controller.ConfiguredTranspilerController;
 import si.gos.transpiler.ui.controller.InstalledTranspilerController;
 
-public class ConfiguredTranspilerPart extends TableCRUDPart {
+public class ConfiguredTranspilerPart extends TableCrudPart {
 
 	private TableViewer viewer;
 	
@@ -33,7 +34,12 @@ public class ConfiguredTranspilerPart extends TableCRUDPart {
 	private Map<String, ConfiguredTranspiler> transpilers = new HashMap<String, ConfiguredTranspiler>();
 	
 	public ConfiguredTranspilerPart(IProject project) {
-		super(true, false, true);
+		super(new CrudConfig() {
+			public boolean getEditVisible() {
+				return false;
+			}
+		});
+		
 		this.project = project;
 		transpilers = manager.getConfiguredTranspilers(project);
 	}
@@ -43,9 +49,8 @@ public class ConfiguredTranspilerPart extends TableCRUDPart {
 	}
 	
 	@Override
-	protected StructuredViewer createStructuredViewer(Composite parent,
-			int style, IWidgetFactory factory) {
-		viewer = (TableViewer)super.createStructuredViewer(parent, style, factory);
+	protected StructuredViewer createStructuredViewer(Composite parent, IWidgetFactory factory) {
+		viewer = (TableViewer)super.createStructuredViewer(parent, factory);
 		viewer.setLabelProvider(controller);
 		viewer.setContentProvider(controller);
 		viewer.setInput(transpilers);

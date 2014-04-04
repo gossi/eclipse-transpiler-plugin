@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import si.gos.eclipse.widgets.helper.IWidgetFactory;
-import si.gos.eclipse.widgets.helper.WidgetFactory;
-import si.gos.eclipse.widgets.helper.WidgetHelper;
+import si.gos.eclipse.widgets.utils.IWidgetFactory;
+import si.gos.eclipse.widgets.utils.WidgetFactory;
+import si.gos.eclipse.widgets.utils.WidgetHelper;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.ui.TranspilerUIPlugin;
 import si.gos.transpiler.ui.parts.ConfiguredTranspilerPart;
@@ -81,7 +81,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 
 		IWidgetFactory factory = new WidgetFactory(); 
 		configuredTranspilerPart = new ConfiguredTranspilerPart(project);
-		configuredTranspilerPart.createControl(left, SWT.DEFAULT, 1, factory);
+		configuredTranspilerPart.createControl(left, factory);
 		configuredTranspilerPart.addSelectionChangedListener(new ISelectionChangedListener() {
 			private ConfiguredTranspiler lastSelection = null;
 			
@@ -133,7 +133,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 		tbtmPaths.setControl(pathsContainer);
 
 		pathEntryPart = new PathEntryPart(project);
-		pathEntryPart.createControl(pathsContainer, SWT.DEFAULT, 1, factory);
+		pathEntryPart.createControl(pathsContainer, factory);
 		pathEntryPart.setEnabled(false);
 		
 		optionItem = new TabItem(tabFolder, SWT.NONE);

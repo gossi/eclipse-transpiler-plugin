@@ -66,7 +66,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -76,7 +76,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="path" type="string">
+         <attribute name="extension" type="string">
             <annotation>
                <documentation>
                   
@@ -90,17 +90,10 @@
 
 You can use the following variables:
 
-%path% - the executable location
-%options% - to place the options
-%source% - the source location
-%destination% - the destination location
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="generic" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  
+$path - the executable location
+$options - to place the options
+$source - the source location
+$destination - the destination location
                </documentation>
             </annotation>
          </attribute>

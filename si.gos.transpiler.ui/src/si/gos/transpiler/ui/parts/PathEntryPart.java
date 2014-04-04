@@ -10,14 +10,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import si.gos.eclipse.parts.TableCRUDPart;
-import si.gos.eclipse.widgets.helper.IWidgetFactory;
+import si.gos.eclipse.parts.TableCrudPart;
+import si.gos.eclipse.widgets.utils.IWidgetFactory;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.ui.controller.PathEntryController;
 import si.gos.transpiler.ui.dialogs.PathDialog;
 
-public class PathEntryPart extends TableCRUDPart {
+public class PathEntryPart extends TableCrudPart {
 
 	private TableViewer viewer;
 	
@@ -31,9 +31,8 @@ public class PathEntryPart extends TableCRUDPart {
 	}
 	
 	@Override
-	protected StructuredViewer createStructuredViewer(Composite parent,
-			int style, IWidgetFactory factory) {
-		viewer = (TableViewer)super.createStructuredViewer(parent, style, factory);
+	protected StructuredViewer createStructuredViewer(Composite parent, IWidgetFactory factory) {
+		viewer = (TableViewer)super.createStructuredViewer(parent, factory);
 		
 		// configure viewer
 		viewer.setLabelProvider(controller);

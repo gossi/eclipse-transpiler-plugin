@@ -56,6 +56,10 @@ public class Option {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public boolean isBoolean() {
+		return type.equals(TYPE_BOOLEAN);
+	}
 
 	/**
 	 * @return the description

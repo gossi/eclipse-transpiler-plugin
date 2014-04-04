@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import si.gos.eclipse.widgets.helper.WidgetHelper;
+import si.gos.eclipse.widgets.utils.WidgetHelper;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
 import si.gos.transpiler.core.transpiler.ITranspiler;
 import si.gos.transpiler.core.transpiler.Option;
@@ -41,13 +41,13 @@ public class OptionsPart {
 		RowLayout layout = new RowLayout();
 		layout.type = SWT.VERTICAL;
 		area.setLayout(layout);
-		WidgetHelper.trimComposite(area, 0);
+		WidgetHelper.trim(area, 0);
 		WidgetHelper.setSpacing(area, 0);
 		WidgetHelper.setMargin(area, 0, 0);
 		
 		// create row for each option
 		rows = new ArrayList<Composite>();
-		for (Option o : transpiler.getOptions()) {
+		for (Option o : transpiler.getOptions().values()) {
 			rows.add(createRow(area, o));
 		}
 		
@@ -61,7 +61,7 @@ public class OptionsPart {
 		RowData rd = new RowData();
 		
 		row.setLayoutData(rd);
-		WidgetHelper.trimComposite(row, 0, 0, 5);
+		WidgetHelper.trim(row, 0, 0, 5);
 		WidgetHelper.setSpacing(row, 0);
 		WidgetHelper.setMargin(row, 0, 0);
 		
@@ -87,7 +87,7 @@ public class OptionsPart {
 		rlayout.type = SWT.VERTICAL;
 		rlayout.wrap = true;
 		right.setLayout(rlayout);
-		WidgetHelper.trimComposite(right, 0);
+		WidgetHelper.trim(right, 0);
 		WidgetHelper.setSpacing(right, 0, 0);
 		WidgetHelper.setMargin(right, 0, 0);
 
@@ -95,7 +95,7 @@ public class OptionsPart {
 		RowLayout tlayout = new RowLayout();
 		tlayout.justify = true;
 		top.setLayout(tlayout);
-		WidgetHelper.trimComposite(top, 2, 0);
+		WidgetHelper.trim(top, 2, 0);
 		WidgetHelper.setSpacing(top, 0);
 		
 		StringBuilder sb = new StringBuilder();

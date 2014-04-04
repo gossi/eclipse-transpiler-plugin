@@ -1,20 +1,20 @@
-package si.gos.transpiler.core.transpiler.less;
+package si.gos.transpiler.core.transpiler.coffeescript;
 
 import si.gos.transpiler.core.transpiler.AbstractTranspiler;
 import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
-public class LessTranspiler extends AbstractTranspiler {
+public class CoffeeScriptTranspiler extends AbstractTranspiler {
 
-	public final static String ID = "si.gos.transpiler.core.transpiler.less";
+	public final static String ID = "si.gos.transpiler.core.transpiler.coffeescript";
 
 	public InstalledTranspiler autoDetect() {
-		String lessPath = exec("which lessc");
+		String coffeePath = exec("which coffee");
 		
-		if (lessPath.isEmpty()) {
-			lessPath = checkLocations("lessc");
+		if (coffeePath.isEmpty()) {
+			coffeePath = checkLocations("coffee");
 		}
 		
-		if (!lessPath.isEmpty()) {
+		if (!coffeePath.isEmpty()) {
 			String nodePath = exec("which node");
 			
 			if (nodePath.isEmpty()) {
@@ -23,12 +23,11 @@ public class LessTranspiler extends AbstractTranspiler {
 			
 			if (!nodePath.isEmpty()) {
 				InstalledTranspiler itp = InstalledTranspiler.fromTranspiler(this);
-				itp.setPath(nodePath + " " + lessPath);
+				itp.setPath(nodePath + " " + coffeePath);
 				
 				return itp;
 			}
 		}
 		return null;
-	}
-
+	}	
 }

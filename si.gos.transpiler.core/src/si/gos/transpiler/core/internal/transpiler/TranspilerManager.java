@@ -32,6 +32,7 @@ public class TranspilerManager implements ITranspilerManager {
 	private final static String NAME = "name";
 	private final static String PATH = "path";
 	private final static String CMD = "cmd";
+	private final static String EXTENSION = "extension";
 	
 	private final static String OPTIONS = "options";
 	private final static String PATHS = "paths";
@@ -43,7 +44,7 @@ public class TranspilerManager implements ITranspilerManager {
 	
 	private Map<String, ITranspiler> transpilers;
 	private Map<String, InstalledTranspiler> installedTranspilers;
-	
+
 	public TranspilerManager() {
 		transpilers = loadTranspilers();
 		installedTranspilers = loadInstalledTranspilers();
@@ -139,6 +140,7 @@ public class TranspilerManager implements ITranspilerManager {
 				transpiler.setName(node.get(NAME, ""));
 				transpiler.setPath(node.get(PATH, ""));
 				transpiler.setCmd(node.get(CMD, ""));
+				transpiler.setExtension(node.get(EXTENSION, ""));
 				transpiler.setTranspilerId(transpilerId);
 				transpiler.setTranspiler(getTranspiler(transpilerId));
 				
@@ -177,6 +179,7 @@ public class TranspilerManager implements ITranspilerManager {
 				node.put(CMD, transpiler.getCmd());
 				node.put(PATH, transpiler.getPath());
 				node.put(NAME, transpiler.getName());
+				node.put(EXTENSION, transpiler.getExtension());
 				node.flush();
 			}
 
@@ -220,7 +223,7 @@ public class TranspilerManager implements ITranspilerManager {
 			// load options
 			String optionsString = tp.get(OPTIONS, "");
 			
-			if (paths.length() > 0) {
+			if (optionsString.length() > 0) {
 				String options[] = optionsString.split(RESOURCE_SEPARATOR);
 			
 				for (String option : options) {
