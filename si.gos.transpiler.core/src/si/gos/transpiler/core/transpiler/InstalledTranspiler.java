@@ -5,7 +5,8 @@ public class InstalledTranspiler {
 
 	private String name;
 	private String id;
-	private String extension;
+	private String sourceExtension;
+	private String destinationExtension;
 	private String path;
 	private String cmd;
 	private String transpilerId;
@@ -112,21 +113,36 @@ public class InstalledTranspiler {
 	/**
 	 * @return the extension
 	 */
-	public String getExtension() {
-		return extension;
+	public String getSourceExtension() {
+		return sourceExtension;
 	}
 
 	/**
 	 * @param extension the extension to set
 	 */
-	public void setExtension(String extension) {
-		this.extension = extension;
+	public void setSourceExtension(String extension) {
+		this.sourceExtension = extension;
+	}
+
+	/**
+	 * @return the destinationExtension
+	 */
+	public String getDestinationExtension() {
+		return destinationExtension;
+	}
+
+	/**
+	 * @param destinationExtension the destinationExtension to set
+	 */
+	public void setDestinationExtension(String destinationExtension) {
+		this.destinationExtension = destinationExtension;
 	}
 	
 	public static InstalledTranspiler fromTranspiler(ITranspiler transpiler) {
 		InstalledTranspiler itp = new InstalledTranspiler();
 		itp.setCmd(transpiler.getCmd());
-		itp.setExtension(transpiler.getExtension());
+		itp.setSourceExtension(transpiler.getSourceExtension());
+		itp.setDestinationExtension(transpiler.getDestinationExtension());
 		itp.setName(transpiler.getName());
 		itp.setTranspiler(transpiler);
 

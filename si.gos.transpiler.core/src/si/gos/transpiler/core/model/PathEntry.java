@@ -48,14 +48,14 @@ public class PathEntry {
 	/**
 	 * @return the transpiler
 	 */
-	public ConfiguredTranspiler getTranspiler() {
+	public ConfiguredTranspiler getConfiguredTranspiler() {
 		return transpiler;
 	}
 
 	/**
 	 * @param transpiler the transpiler to set
 	 */
-	public void setTranspiler(ConfiguredTranspiler transpiler) {
+	public void setConfiguredTranspiler(ConfiguredTranspiler transpiler) {
 		this.transpiler = transpiler;
 	}
 	

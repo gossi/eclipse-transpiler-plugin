@@ -72,7 +72,11 @@ public class PathEntryPart extends TableCrudPart {
 	protected void handleAdd(IStructuredSelection selection) {
 		PathDialog diag = new PathDialog(getShell(), project);
 		if (diag.open() == Dialog.OK) {
-			controller.add(diag.getEntry());
+			PathEntry entry = diag.getEntry();
+			if (entry.getSource() != null && entry.getDestination() != null) {
+				entry.setConfiguredTranspiler(transpiler);
+				controller.add(entry);
+			}
 			viewer.refresh();
 		}
 	}
@@ -84,14 +88,21 @@ public class PathEntryPart extends TableCrudPart {
 		int index = controller.indexOf(entry);
 		diag.setEntry(entry);
 		if (diag.open() == Dialog.OK) {
-			controller.update(index, diag.getEntry());
+			entry = diag.getEntry();
+			if (entry.getSource() != null && entry.getDestination() != null) {
+				controller.update(index, diag.getEntry());
+			} else {
+				controller.remove(entry);
+			}
 			viewer.refresh();
 		}
 	}
 	
 	@Override
 	protected void handleRemove(IStructuredSelection selection) {
-		controller.remove((PathEntry)selection.getFirstElement());
+		PathEntry entry = (PathEntry)selection.getFirstElement();
+		entry.setConfiguredTranspiler(null);
+		controller.remove(entry);
 		viewer.refresh();
 	}
 }

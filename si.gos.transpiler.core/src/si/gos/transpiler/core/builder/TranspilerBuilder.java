@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -16,17 +17,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import si.gos.eclipse.exec.Launcher;
 import si.gos.transpiler.core.TranspilerNature;
 import si.gos.transpiler.core.model.ConfiguredTranspiler;
-import si.gos.transpiler.core.model.PathEntry;
 import si.gos.transpiler.core.model.ResourceLocator;
+import si.gos.transpiler.core.model.TranspileItem;
+import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
 public class TranspilerBuilder extends IncrementalProjectBuilder {
 
 	public static final String ID = "si.gos.transpiler.builder.TranspilerBuilder";
 	
-	private Map<String, PathEntry> cache;
+	private Map<String, TranspileItem> cache;
 	
 	public TranspilerBuilder() {
-		cache = new HashMap<String, PathEntry>();
+		cache = new HashMap<String, TranspileItem>();
 	}
 	
 	/*
@@ -48,8 +50,7 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 		launcher.addResponseListener(new ConsoleResponseHandler());
 		
 		IResourceDelta delta = getDelta(project);
-		
-		
+
 		if (delta != null) {
 			ResourceLocator locator = new ResourceLocator(project);
 			searchAndTranspile(delta.getAffectedChildren(), locator, launcher);
@@ -61,41 +62,45 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 	private void searchAndTranspile(IResourceDelta[] affectedChildren, ResourceLocator locator, Launcher launcher) {
 		for (IResourceDelta affected : affectedChildren) {
 			IPath path = affected.getProjectRelativePath();
+			
+			if (affected.getResource() instanceof IFile) {
+				TranspileItem transpileItem = null;
+				// TODO: Cache, see: https://stackoverflow.com/questions/22886012/get-the-instance-for-an-eclipse-builder
+//				String cacheKey = path.toString();
+//				if (cache.containsKey(cacheKey)) {
+//					transpileItem = cache.get(cacheKey);
+//				} else {
+					transpileItem = locator.getTranspileItem(path);
+//					cache.put(cacheKey, transpileItem);
+//				}
 
-			PathEntry pathEntry = null;
-			String cacheKey = path.toString();
-			if (cache.containsKey(cacheKey)) {
-				pathEntry = cache.get(cacheKey);
-			} else {
-				pathEntry = locator.getPath(path);
-				cache.put(cacheKey, pathEntry);
-			}
-
-			if (pathEntry != null) {
-				transpile(pathEntry, launcher);
+				if (transpileItem != null) {
+					transpile(transpileItem, launcher);
+				}
 			}
 
 			searchAndTranspile(affected.getAffectedChildren(), locator, launcher);
 		}
 	}
 
-	private void transpile(PathEntry pathEntry, Launcher launcher) {
-		ConfiguredTranspiler ct = pathEntry.getTranspiler();
+	private void transpile(TranspileItem transpileItem, Launcher launcher) {
+		ConfiguredTranspiler ct = transpileItem.getConfiguredTranspiler();
+		InstalledTranspiler itp = transpileItem.getInstalledTranspiler();
 
-		String source = pathEntry.getSource().getProjectRelativePath().toOSString();
-		String dest = pathEntry.getDestination().getProjectRelativePath().toOSString();
-		String path = ct.getInstalledTranspiler().getPath().toString();
+		String source = transpileItem.getSource().toOSString();
+		String dest = transpileItem.getDestination().toOSString();
+		String path = itp.getPath().toString();
 		
 		Map<String, String> subs = new HashMap<String, String>();
 		subs.put("source", source);
 		subs.put("destination", dest);
 
-		CommandLine cmd = ct.getInstalledTranspiler().getTranspiler().getCommand(path, ct.getOptions());
+		CommandLine cmd = itp.getTranspiler().getCommand(path, ct.getOptions());
 		cmd.setSubstitutionMap(subs);
 
 //		System.out.println("Transpiler: " + ct.getInstalledTranspiler().getTranspiler().getName());
 //		System.out.println("From: " + source + ", To: " + dest);
-//		System.out.println("Cmd: " + cmd.getExecutable());
+		System.out.println("Cmd: " + cmd);
 		
 		try {
 			launcher.launch(cmd);
@@ -105,6 +110,18 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void updateCache(ResourceLocator locator) {
+		IProject project = locator.getProject();
+		for (String cacheKey : cache.keySet()) {
+			IPath path = project.findMember(cacheKey).getProjectRelativePath();
+			
+			TranspileItem item = locator.getTranspileItem(path);
+			if (item == null) {
+				cache.remove(cacheKey);
+			}
 		}
 	}
 	

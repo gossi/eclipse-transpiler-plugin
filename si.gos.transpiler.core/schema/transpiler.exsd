@@ -76,13 +76,6 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="extension" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="cmd" type="string">
             <annotation>
                <documentation>
@@ -94,6 +87,20 @@ $path - the executable location
 $options - to place the options
 $source - the source location
 $destination - the destination location
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sourceExtension" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="destinationExtension" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

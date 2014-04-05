@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 import si.gos.transpiler.core.TranspilerPlugin;
+import si.gos.transpiler.core.transpiler.ITranspiler;
 import si.gos.transpiler.core.transpiler.ITranspilerManager;
+import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
 public class ResourceLocator {
 
 	private IProject project;
 	private ITranspilerManager manager;
 	private List<PathEntry> paths;
-	private List<IResource> resources;
 	
 	public ResourceLocator(IProject project) {
 		this.project = project;
@@ -26,32 +28,56 @@ public class ResourceLocator {
 	
 	public void fetchSources() {
 		paths = new ArrayList<PathEntry>();
-		resources = new ArrayList<IResource>();
 		List<ConfiguredTranspiler> cts = new ArrayList<ConfiguredTranspiler>(manager.getConfiguredTranspilers(project).values());
 		
 		for (ConfiguredTranspiler ct : cts) {
 			for (PathEntry path : ct.getPaths()) {
 				paths.add(path);
-				resources.add(path.getSource());
 			}
 		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (PathEntry path : paths) {
+			sb.append(path.getSource().getProjectRelativePath() + ", ");
+		}
+		System.out.println("Paths: " + sb);
 	}
 
-	public PathEntry getPath(IPath path) {
-		PathEntry found = null;
-		for (PathEntry pathEntry : paths) {
-			IResource res =  pathEntry.getSource();
-			IPath resPath = res.getProjectRelativePath();
+	public TranspileItem getTranspileItem(IPath path) {
 
-			if (resPath.equals(path)) {
-				// extension check
-				if (res instanceof IFile 
-						|| resPath.getFileExtension().equals(pathEntry.getTranspiler().getInstalledTranspiler().getExtension())) {
-					return pathEntry;
+		for (PathEntry pathEntry : paths) {
+			IResource sourceResource = pathEntry.getSource();
+			
+			if (sourceResource != null && sourceResource.exists()) {
+				IPath sourcePath = sourceResource.getProjectRelativePath();
+				InstalledTranspiler itp = pathEntry.getConfiguredTranspiler().getInstalledTranspiler();
+				ITranspiler transpiler = itp.getTranspiler();
+	
+				if (sourceResource instanceof IFile && sourcePath.equals(path)) {
+					IPath dest = transpiler.getOutputOption(path, pathEntry.getDestination().getProjectRelativePath());
+					return new TranspileItem(pathEntry, path, dest);
+				} else if (sourceResource instanceof IFolder) {
+					sourcePath = sourcePath.addTrailingSeparator();
+					IPath folder = path.removeLastSegments(1).addTrailingSeparator();
+					String sourceExt = itp.getSourceExtension();
+
+					if (sourcePath.equals(folder) && path.getFileExtension().equals(sourceExt)) {
+						String filename = path.lastSegment();
+						filename = filename.replaceFirst("(.*)" + sourceExt + "$", "$1" + itp.getDestinationExtension()); 
+						IPath destFolder = pathEntry.getDestination().getProjectRelativePath();
+						IPath dest = transpiler.getOutputOption(path, destFolder.append(filename));
+						
+						return new TranspileItem(pathEntry, path, dest);
+					}
 				}
+				
 			}
 		}
 
-		return found;
+		return null;
+	}
+	
+	public IProject getProject() {
+		return project;
 	}
 }

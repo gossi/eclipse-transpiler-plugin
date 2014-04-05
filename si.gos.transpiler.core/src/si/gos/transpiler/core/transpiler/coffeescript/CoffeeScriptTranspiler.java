@@ -1,5 +1,7 @@
 package si.gos.transpiler.core.transpiler.coffeescript;
 
+import org.eclipse.core.runtime.IPath;
+
 import si.gos.transpiler.core.transpiler.AbstractTranspiler;
 import si.gos.transpiler.core.transpiler.InstalledTranspiler;
 
@@ -29,5 +31,9 @@ public class CoffeeScriptTranspiler extends AbstractTranspiler {
 			}
 		}
 		return null;
-	}	
+	}
+	
+	public IPath getOutputOption(IPath from, IPath to) {
+		return to.removeLastSegments(1).addTrailingSeparator();
+	}
 }

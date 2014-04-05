@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 
 import si.gos.eclipse.exec.ExecutionResponseAdapter;
 import si.gos.eclipse.exec.Launcher;
@@ -15,7 +16,8 @@ public abstract class AbstractTranspiler implements ITranspiler {
 	protected String name;
 	protected String id;
 	protected String cmd;
-	protected String extension;
+	protected String sourceExtension;
+	protected String destinationExtension;
 	private String lastExecMessage;
 	
 	protected Map<String, Option> options;
@@ -23,7 +25,8 @@ public abstract class AbstractTranspiler implements ITranspiler {
 	public void init(IConfigurationElement config) {
 		name = config.getAttribute("name") != null ? config.getAttribute("name") : "";
 		id = config.getAttribute("id") != null ? config.getAttribute("id") : "";
-		extension =  config.getAttribute("extension") != null ? config.getAttribute("extension") : "";
+		sourceExtension = config.getAttribute("sourceExtension") != null ? config.getAttribute("sourceExtension") : "";
+		destinationExtension = config.getAttribute("destinationExtension") != null ? config.getAttribute("destinationExtension") : "";
 		cmd = config.getAttribute("cmd") != null ? config.getAttribute("cmd") : "";
 
 		options = new LinkedHashMap<String, Option>();
@@ -44,10 +47,17 @@ public abstract class AbstractTranspiler implements ITranspiler {
 	
 
 	/**
-	 * @return the extension
+	 * @return the source extension
 	 */
-	public String getExtension() {
-		return extension;
+	public String getSourceExtension() {
+		return sourceExtension;
+	}
+	
+	/**
+	 * @return the destination extension
+	 */
+	public String getDestinationExtension() {
+		return destinationExtension;
 	}
 
 	/**
@@ -86,6 +96,10 @@ public abstract class AbstractTranspiler implements ITranspiler {
 		}
 		
 		return ob.toString().trim();
+	}
+	
+	public IPath getOutputOption(IPath from, IPath to) {
+		return to;
 	}
 
 	public CommandLine getCommand(String path, Map<String, String> options) {

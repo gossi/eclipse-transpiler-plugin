@@ -51,12 +51,12 @@ public class ConfiguredTranspiler {
 	}
 	
 	public void addPath(PathEntry path) {
-		path.setTranspiler(this);
+		path.setConfiguredTranspiler(this);
 		paths.add(path);
 	}
 	
 	public void removePath(PathEntry path) {
-		path.setTranspiler(null);
+		path.setConfiguredTranspiler(null);
 		paths.remove(path);
 	}
 	

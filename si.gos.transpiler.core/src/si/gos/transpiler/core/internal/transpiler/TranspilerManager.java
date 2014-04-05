@@ -32,7 +32,8 @@ public class TranspilerManager implements ITranspilerManager {
 	private final static String NAME = "name";
 	private final static String PATH = "path";
 	private final static String CMD = "cmd";
-	private final static String EXTENSION = "extension";
+	private final static String SOURCE_EXTENSION = "source-extension";
+	private final static String DESTINATION_EXTENSION = "destination-extension";
 	
 	private final static String OPTIONS = "options";
 	private final static String PATHS = "paths";
@@ -44,10 +45,12 @@ public class TranspilerManager implements ITranspilerManager {
 	
 	private Map<String, ITranspiler> transpilers;
 	private Map<String, InstalledTranspiler> installedTranspilers;
+	private Map<IProject, Map<String, ConfiguredTranspiler>> configuredTranspilers;
 
 	public TranspilerManager() {
 		transpilers = loadTranspilers();
 		installedTranspilers = loadInstalledTranspilers();
+		configuredTranspilers = new LinkedHashMap<IProject, Map<String, ConfiguredTranspiler>>();
 	}
 
 	public Map<String, ITranspiler> getTranspilers() {
@@ -140,7 +143,8 @@ public class TranspilerManager implements ITranspilerManager {
 				transpiler.setName(node.get(NAME, ""));
 				transpiler.setPath(node.get(PATH, ""));
 				transpiler.setCmd(node.get(CMD, ""));
-				transpiler.setExtension(node.get(EXTENSION, ""));
+				transpiler.setSourceExtension(node.get(SOURCE_EXTENSION, ""));
+				transpiler.setDestinationExtension(node.get(DESTINATION_EXTENSION, ""));
 				transpiler.setTranspilerId(transpilerId);
 				transpiler.setTranspiler(getTranspiler(transpilerId));
 				
@@ -179,7 +183,8 @@ public class TranspilerManager implements ITranspilerManager {
 				node.put(CMD, transpiler.getCmd());
 				node.put(PATH, transpiler.getPath());
 				node.put(NAME, transpiler.getName());
-				node.put(EXTENSION, transpiler.getExtension());
+				node.put(SOURCE_EXTENSION, transpiler.getSourceExtension());
+				node.put(DESTINATION_EXTENSION, transpiler.getDestinationExtension());
 				node.flush();
 			}
 
@@ -194,6 +199,10 @@ public class TranspilerManager implements ITranspilerManager {
 
 	@Override
 	public Map<String, ConfiguredTranspiler> getConfiguredTranspilers(IProject project) {
+		if (configuredTranspilers.containsKey(project)) {
+			return configuredTranspilers.get(project);
+		}
+
 		IEclipsePreferences prefs = TranspilerPlugin.getDefault().getProjectPreferences(project);
 		String list = prefs.get(PreferenceConstants.TRANSPILERS, "");
 		String[] ids = new String[]{};
@@ -210,10 +219,10 @@ public class TranspilerManager implements ITranspilerManager {
 			
 			// load paths
 			String paths = tp.get(PATHS, "");
-			
+
 			if (paths.length() > 0) {
 				String resources[] = paths.split(RESOURCE_SEPARATOR);
-			
+
 				for (String resource : resources) {
 					String parts[] = resource.split(PATH_SEPARATOR);
 					ctp.addPath(new PathEntry(project.findMember(parts[0]), project.findMember(parts[1])));
@@ -238,6 +247,7 @@ public class TranspilerManager implements ITranspilerManager {
 			// add to collection
 			ctps.put(ctp.getId(), ctp);
 		}
+		configuredTranspilers.put(project, ctps);
 		
 		return ctps;
 	}
@@ -277,7 +287,8 @@ public class TranspilerManager implements ITranspilerManager {
 				
 				tp.put(OPTIONS, StringUtils.join(options, RESOURCE_SEPARATOR));
 			}
-			
+
+			this.configuredTranspilers.put(project, configuredTranspilers);
 			prefs.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();

@@ -46,6 +46,10 @@ public class ConfiguredTranspilerPart extends TableCrudPart {
 	
 	public void saveTranspilers() {
 		manager.saveConfiguredTranspilers(project, transpilers);
+		
+		// TODO: Update Builder cache
+		// https://stackoverflow.com/questions/22886012/get-the-instance-for-an-eclipse-builder
+		// TranspilerBuilder.updateCache();
 	}
 	
 	@Override

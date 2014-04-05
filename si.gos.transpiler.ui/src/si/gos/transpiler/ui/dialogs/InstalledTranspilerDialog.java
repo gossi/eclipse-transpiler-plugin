@@ -34,7 +34,8 @@ public class InstalledTranspilerDialog extends Dialog {
 	private boolean fillingFromPreset = false;
 	
 	private InstalledTranspiler transpiler;
-	private Text extension;
+	private Text sourceExtension;
+	private Text destinationExtension;
 
 	protected InstalledTranspilerDialog(IShellProvider parentShell, InstalledTranspiler transpiler) {
 		super(parentShell);
@@ -115,14 +116,26 @@ public class InstalledTranspilerDialog extends Dialog {
 			}
 		});
 		
-		Label lblExtension = new Label(grid, SWT.NONE);
-		lblExtension.setText("Extension");
+		Label lblSourceExtension = new Label(grid, SWT.NONE);
+		lblSourceExtension.setText("Extension (Source)");
 		
-		extension = new Text(grid, SWT.BORDER);
-		extension.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		extension.addModifyListener(new ModifyListener() {
+		sourceExtension = new Text(grid, SWT.BORDER);
+		sourceExtension.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		sourceExtension.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				transpiler.setPath(extension.getText());
+				transpiler.setSourceExtension(sourceExtension.getText());
+			}
+		});
+		
+		Label lblDestinationExtension = new Label(grid, SWT.NONE);
+		lblDestinationExtension.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblDestinationExtension.setText("Extension (Destination)");
+		
+		destinationExtension = new Text(grid, SWT.BORDER);
+		destinationExtension.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		destinationExtension.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				transpiler.setDestinationExtension(destinationExtension.getText());
 			}
 		});
 		
@@ -170,7 +183,8 @@ public class InstalledTranspilerDialog extends Dialog {
 //		cmd.setEnabled(transpiler.isGeneric());
 		path.setText(this.transpiler.getPath());
 		cmd.setText(transpiler.getCmd());
-		extension.setText(transpiler.getExtension());
+		sourceExtension.setText(transpiler.getSourceExtension());
+		destinationExtension.setText(transpiler.getDestinationExtension());
 		this.transpiler.setTranspiler(transpiler);
 	}
 

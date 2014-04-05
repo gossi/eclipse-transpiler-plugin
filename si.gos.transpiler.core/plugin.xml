@@ -37,9 +37,10 @@
       <transpiler
             class="si.gos.transpiler.core.transpiler.less.LessTranspiler"
             cmd="$path $options $source $destination"
-            extension="less"
+            destinationExtension="css"
             id="si.gos.transpiler.core.transpiler.less"
-            name="LESS">
+            name="LESS"
+            sourceExtension="less">
          <option
                description="Compress output by removing some whitespaces."
                name="compress"
@@ -125,9 +126,10 @@
       <transpiler
             class="si.gos.transpiler.core.transpiler.sass.SassTranspiler"
             cmd="$path $options $source $destination"
-            extension="sass"
+            destinationExtension="css"
             id="si.gos.transpiler.core.transpiler.sass"
-            name="SASS">
+            name="SASS"
+            sourceExtension="sass">
          <option
                description="Output style. Can be nested (default), compact, compressed, or expanded."
                name="style"
@@ -194,9 +196,10 @@
       <transpiler
             class="si.gos.transpiler.core.transpiler.scss.ScssTranspiler"
             cmd="$path $options --scss $source $destination"
-            extension="scss"
+            destinationExtension="css"
             id="si.gos.transpiler.core.transpiler.scss"
-            name="SCSS">
+            name="SCSS"
+            sourceExtension="scss">
          <option
                description="Output style. Can be nested (default), compact, compressed, or expanded."
                name="style"
@@ -263,9 +266,10 @@
       <transpiler
             class="si.gos.transpiler.core.transpiler.coffeescript.CoffeeScriptTranspiler"
             cmd="$path $options -o $destination $source"
-            extension="coffee"
+            destinationExtension="js"
             id="si.gos.transpiler.core.transpiler.coffeescript"
-            name="CoffeeScript">
+            name="CoffeeScript"
+            sourceExtension="coffee">
          <option
                description="compile without a top-level function wrapper"
                name="bare"
