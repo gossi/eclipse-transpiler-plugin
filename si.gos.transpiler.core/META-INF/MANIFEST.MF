@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core
+Bundle-Name: Transpiler Core
 Bundle-SymbolicName: si.gos.transpiler.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: si.gos.transpiler.core.TranspilerPlugin

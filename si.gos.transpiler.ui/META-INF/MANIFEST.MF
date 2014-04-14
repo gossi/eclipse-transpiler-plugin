@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui
+Bundle-Name: Transpiler UI
 Bundle-SymbolicName: si.gos.transpiler.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: si.gos.transpiler.ui.TranspilerUIPlugin
