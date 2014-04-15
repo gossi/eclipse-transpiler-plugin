@@ -9,7 +9,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>si.gos.transpiler.feature</artifactId>
+	<artifactId>si.gos.transpiler</artifactId>
 	<packaging>eclipse-feature</packaging>
 
 </project>
