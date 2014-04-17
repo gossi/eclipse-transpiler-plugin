@@ -17,7 +17,9 @@ You'll find the Transpiler Feature in the Toolchains category.
 
 Note:
 
-Eclipse doesn't know about your environment (because it keeps one itself). All your `%PATH` variables, etc. won't be available in eclipse. Thus eclipse can't run a `lessc` command. You need the full path for `lessc`. You can find out your path with the `which` command:
+Eclipse doesn't know about your environment (because it keeps one itself). All your `%PATH` variables, etc. won't be available in eclipse. Thus eclipse can't run a commands, such as `lessc`, `sass` or `coffee`. You need the full path to your command. See the example for the `lessc` command:
+
+Find out your path with the `which` command:
 
 ```
 $ which lessc
@@ -31,7 +33,7 @@ $ head -n1 /usr/local/bin/lessc
 #!/usr/bin/env node
 ```
 
-Because this is an env variable itself, eclipse also doesn't know about that, so this must be prepended to the `lessc` command. Search for it as above:
+Because this is an env variable itself, eclipse also doesn't know about that, so the `node` command (of course with full path) must be prepended to the `lessc` command. Search for it as above:
 
 ```
 $ which node
