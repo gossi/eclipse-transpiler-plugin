@@ -2,7 +2,7 @@
 
 Eclipse plugin to automatically transpile your files (LESS, SASS, CoffeeScript, etc.).
 
-Transpiling (or [https://en.wikipedia.org/wiki/Source-to-source_compiler](source-to-source) compilation) means transforming code from one language (eg. LESS) to another (eg CSS).
+Transpiling (or [source-to-source](https://en.wikipedia.org/wiki/Source-to-source_compiler) compilation) means transforming code from one language (eg. LESS) to another (eg CSS).
 
 ## Installation
 
