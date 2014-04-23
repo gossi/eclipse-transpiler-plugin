@@ -169,7 +169,6 @@ public class InstalledTranspilerDialog extends Dialog {
 			setActiveTranspiler(transpiler.getTranspiler());
 		}
 		
-//		return super.createDialogArea(parent);
 		return grid;
 	}
 	
@@ -179,9 +178,11 @@ public class InstalledTranspilerDialog extends Dialog {
 			name.setText(transpiler.getName());
 			fillingFromPreset = false;
 		}
-//		path.setEnabled(!transpiler.isGeneric());
-//		cmd.setEnabled(transpiler.isGeneric());
-		path.setText(this.transpiler.getPath());
+		
+		if (this.transpiler != null && this.transpiler.getPath() != null) {
+			path.setText(this.transpiler.getPath());
+		}
+		
 		cmd.setText(transpiler.getCmd());
 		sourceExtension.setText(transpiler.getSourceExtension());
 		destinationExtension.setText(transpiler.getDestinationExtension());
