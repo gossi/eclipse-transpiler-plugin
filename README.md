@@ -2,6 +2,8 @@
 
 Eclipse plugin to automatically transpile your files (LESS, SASS, CoffeeScript, etc.).
 
+Transpiling (or [https://en.wikipedia.org/wiki/Source-to-source_compiler](source-to-source) compilation) means transforming code from one language (eg. LESS) to another (eg CSS).
+
 ## Installation
 
 Install from the PEX update site: [http://p2-dev.pdt-extensions.org/](http://p2-dev.pdt-extensions.org/)<br>
