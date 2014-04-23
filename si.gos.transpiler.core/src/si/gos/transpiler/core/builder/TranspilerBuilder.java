@@ -8,6 +8,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -53,13 +54,13 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 
 		if (delta != null) {
 			ResourceLocator locator = new ResourceLocator(project);
-			searchAndTranspile(delta.getAffectedChildren(), locator, launcher);
+			searchAndTranspile(delta.getAffectedChildren(), locator, launcher, monitor);
 		}
 		
 		return null;
 	}
 	
-	private void searchAndTranspile(IResourceDelta[] affectedChildren, ResourceLocator locator, Launcher launcher) {
+	private void searchAndTranspile(IResourceDelta[] affectedChildren, ResourceLocator locator, Launcher launcher, IProgressMonitor monitor) {
 		for (IResourceDelta affected : affectedChildren) {
 			IPath path = affected.getProjectRelativePath();
 			
@@ -75,15 +76,15 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 //				}
 
 				if (transpileItem != null) {
-					transpile(transpileItem, launcher);
+					transpile(transpileItem, launcher, monitor);
 				}
 			}
 
-			searchAndTranspile(affected.getAffectedChildren(), locator, launcher);
+			searchAndTranspile(affected.getAffectedChildren(), locator, launcher, monitor);
 		}
 	}
 
-	private void transpile(TranspileItem transpileItem, Launcher launcher) {
+	private void transpile(TranspileItem transpileItem, Launcher launcher, IProgressMonitor monitor) {
 		ConfiguredTranspiler ct = transpileItem.getConfiguredTranspiler();
 		InstalledTranspiler itp = transpileItem.getInstalledTranspiler();
 
@@ -100,15 +101,24 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 
 //		System.out.println("Transpiler: " + ct.getInstalledTranspiler().getTranspiler().getName());
 //		System.out.println("From: " + source + ", To: " + dest);
-		System.out.println("Cmd: " + cmd);
+//		System.out.println("Cmd: " + cmd);
 		
 		try {
 			launcher.launch(cmd);
+			
+			// refresh workspace
+			IProject project = getProject();
+			IResource res = project.findMember(dest);
+			if (res != null) {
+				res.refreshLocal(IResource.DEPTH_ONE, monitor);
+			}
 		} catch (ExecuteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}

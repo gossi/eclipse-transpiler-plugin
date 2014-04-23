@@ -40,7 +40,6 @@ public class ResourceLocator {
 		for (PathEntry path : paths) {
 			sb.append(path.getSource().getProjectRelativePath() + ", ");
 		}
-		System.out.println("Paths: " + sb);
 	}
 
 	public TranspileItem getTranspileItem(IPath path) {
