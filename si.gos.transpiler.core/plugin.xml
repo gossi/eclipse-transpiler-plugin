@@ -288,6 +288,24 @@
                type="boolean">
          </option>
       </transpiler>
+      <transpiler
+            class="si.gos.transpiler.core.transpiler.traceur.TraceurTranspiler"
+            cmd="$path $options --out $destination $source"
+            destinationExtension="js"
+            id="si.gos.transpiler.core.transpiler.traceur"
+            name="Traceur"
+            sourceExtension="js">
+         <option
+               description="Generate source maps"
+               name="sourcemap"
+               type="boolean">
+         </option>
+         <option
+               description="Turns on all experimental features"
+               name="experimental"
+               type="boolean">
+         </option>
+      </transpiler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

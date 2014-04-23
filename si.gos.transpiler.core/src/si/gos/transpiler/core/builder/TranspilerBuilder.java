@@ -54,13 +54,16 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 
 		if (delta != null) {
 			ResourceLocator locator = new ResourceLocator(project);
-			searchAndTranspile(delta.getAffectedChildren(), locator, launcher, monitor);
+			searchAndTranspile(delta.getAffectedChildren(), locator, launcher);
+			
+			// refresh workspace
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		}
 		
 		return null;
 	}
 	
-	private void searchAndTranspile(IResourceDelta[] affectedChildren, ResourceLocator locator, Launcher launcher, IProgressMonitor monitor) {
+	private void searchAndTranspile(IResourceDelta[] affectedChildren, ResourceLocator locator, Launcher launcher) {
 		for (IResourceDelta affected : affectedChildren) {
 			IPath path = affected.getProjectRelativePath();
 			
@@ -76,15 +79,15 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 //				}
 
 				if (transpileItem != null) {
-					transpile(transpileItem, launcher, monitor);
+					transpile(transpileItem, launcher);
 				}
 			}
 
-			searchAndTranspile(affected.getAffectedChildren(), locator, launcher, monitor);
+			searchAndTranspile(affected.getAffectedChildren(), locator, launcher);
 		}
 	}
 
-	private void transpile(TranspileItem transpileItem, Launcher launcher, IProgressMonitor monitor) {
+	private void transpile(TranspileItem transpileItem, Launcher launcher) {
 		ConfiguredTranspiler ct = transpileItem.getConfiguredTranspiler();
 		InstalledTranspiler itp = transpileItem.getInstalledTranspiler();
 
@@ -105,20 +108,11 @@ public class TranspilerBuilder extends IncrementalProjectBuilder {
 		
 		try {
 			launcher.launch(cmd);
-			
-			// refresh workspace
-			IProject project = getProject();
-			IResource res = project.findMember(dest);
-			if (res != null) {
-				res.refreshLocal(IResource.DEPTH_ONE, monitor);
-			}
 		} catch (ExecuteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
