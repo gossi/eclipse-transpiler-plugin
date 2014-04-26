@@ -8,8 +8,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import si.gos.transpiler.core.internal.transpiler.TranspilerManager;
 import si.gos.transpiler.core.transpiler.ITranspilerManager;
+import si.gos.transpiler.internal.core.transpiler.TranspilerManager;
 
 /**
  * The activator class controls the plug-in life cycle
