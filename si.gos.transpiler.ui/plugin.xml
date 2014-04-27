@@ -16,28 +16,28 @@
             class="si.gos.transpiler.ui.preferences.ProjectTranspilerPage"
             id="si.gos.transpiler.ui.preferences.projectPropertyPage"
             name="Transpilers">
-         <enabledWhen>
-         	<and>
-		        <adapt
-		              type="org.eclipse.core.resources.IProject">
-		        </adapt>
-            	<test 
-            		value="si.gos.transpiler.nature"
-					property="org.eclipse.core.resources.projectNature">
-            	</test>
-            </and>
-         </enabledWhen>
+		 <enabledWhen>
+		 	<and>
+		        <adapt type="org.eclipse.core.resources.IProject" />
+		        <adapt type="org.eclipse.core.resources.IResource" >
+		        	<test 
+		        		value="si.gos.transpiler.nature"
+						property="org.eclipse.core.resources.projectNature">
+		        	</test>
+		    	</adapt>
+		    </and>
+		 </enabledWhen>
       </page>
    </extension>
-   <!--<extension
+   <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="si.gos.transpiler.ui.handler.ToggleTranspilerNatureHandler"
+            defaultHandler="si.gos.transpiler.ui.handler.AddTranspilerNatureHandler"
             id="si.gos.transpiler.ui.addTranspilerSupport"
             name="Add Transpiler Support">
       </command>
       <command
-            defaultHandler="si.gos.transpiler.ui.handler.ToggleTranspilerNatureHandler"
+            defaultHandler="si.gos.transpiler.ui.handler.RemoveTranspilerNatureHandler"
             id="si.gos.transpiler.ui.removeTranspilerSupport"
             name="Remove Transpiler Support">
       </command>
@@ -54,10 +54,12 @@
 				<with variable="selection">
 	          		<iterate>
 	            		<not>
-	            			<test 
-	                    		value="si.gos.transpiler.nature"
-								property="org.eclipse.core.resources.projectNature">
-	                    	</test>
+	            			<adapt type="org.eclipse.core.resources.IProject">
+						    	<test
+						           property="org.eclipse.core.resources.projectNature"
+						           value="si.gos.transpiler.nature">
+						    	</test>
+							</adapt>
 	                    </not>
 	            	</iterate>
 	            </with>
@@ -70,66 +72,16 @@
             <visibleWhen checkEnabled="false">
 				<with variable="selection">
 	          		<iterate>
-	            		<test 
-                    		value="si.gos.transpiler.nature"
-							property="org.eclipse.core.resources.projectNature">
-                    	</test>
+                    	<adapt type="org.eclipse.core.resources.IProject">
+					    	<test
+					           property="org.eclipse.core.resources.projectNature"
+					           value="si.gos.transpiler.nature">
+					    	</test>
+						</adapt>
 	                </iterate>
 	            </with>
             </visibleWhen>
          </command>
       </menuContribution>
-   </extension>-->
-   <!-- WORKAROUND -->
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="true"
-            id="si.gos.transpiler.ui.addTranspilerNature"
-            objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="si.gos.transpiler.ui.actions.AddTranspilerNatureAction"
-               id="si.gos.transpiler.ui.addTranspilerNature"
-               label="Add Transpiler Support"
-               menubarPath="org.eclipse.ui.projectConfigure/additions">
-         </action>
-         <visibility>
-            <and>
-               <objectState
-                     name="open"
-                     value="true">
-               </objectState>
-               <not>
-                  <objectState
-                        name="nature"
-                        value="si.gos.transpiler.nature">
-                  </objectState>
-               </not>
-            </and>
-         </visibility>
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
-            id="si.gos.transpiler.ui.removeTranspilerNature"
-            objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="si.gos.transpiler.ui.actions.RemoveTranspilerNatureAction"
-               id="si.gos.transpiler.ui.removeTranspilerNature"
-               label="Remove Transpiler Support"
-               menubarPath="org.eclipse.ui.projectConfigure/additions">
-         </action>
-         <visibility>
-            <and>
-               <objectState
-                     name="open"
-                     value="true">
-               </objectState>
-               <objectState
-                     name="nature"
-                     value="si.gos.transpiler.nature">
-               </objectState>
-            </and>
-         </visibility>
-      </objectContribution>
    </extension>
 </plugin>
