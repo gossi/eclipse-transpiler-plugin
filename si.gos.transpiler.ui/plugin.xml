@@ -25,9 +25,6 @@
             		value="si.gos.transpiler.nature"
 					property="org.eclipse.core.resources.projectNature">
             	</test>
-             	<instanceof
-                   value="si.gos.transpiler.ui.Object1">
-             	</instanceof>
             </and>
          </enabledWhen>
       </page>
