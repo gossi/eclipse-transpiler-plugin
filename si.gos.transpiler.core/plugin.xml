@@ -307,7 +307,7 @@
          </option>
       </transpiler>
       <transpiler
-				class="si.gos.transpiler.core.transpiler.less.JadeTranspiler"
+				class="si.gos.transpiler.core.transpiler.jade.JadeTranspiler"
 				cmd="$path $options $source $destination"
 				destinationExtension="html"
 				id="si.gos.transpiler.core.transpiler.jade"
