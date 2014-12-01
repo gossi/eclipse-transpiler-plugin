@@ -62,5 +62,5 @@ Once Transpilers are installed, configure them per project. Open the properties 
 
 ## Contributing
 
-Please feel free to open [issues](issues) for problems you are facing or [fork](fork) the repo and add your wishes.
+Please feel free to open [issues](/gossi/eclipse-transpiler-plugin/issues) for problems you are facing or [fork](/gossi/eclipse-transpiler-plugin/fork) the repo and add your wishes.
 
