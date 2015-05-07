@@ -306,6 +306,14 @@
                type="boolean">
          </option>
       </transpiler>
+      <transpiler
+				class="si.gos.transpiler.core.transpiler.jade.JadeTranspiler"
+				cmd="$path $options $source $destination"
+				destinationExtension="html"
+				id="si.gos.transpiler.core.transpiler.jade"
+				name="Jade"
+				sourceExtension="jade">
+      </transpiler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
