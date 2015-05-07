@@ -70,7 +70,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 		WidgetHelper.setMargin(page, 0, 0);
 		WidgetHelper.setSpacing(page, 0, 0);
 
-		// left
+		// top
 		Composite left = new Composite(page, SWT.NONE);
 		left.setLayout(new GridLayout(2, false));
 		GridData gd_left = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
@@ -104,7 +104,7 @@ public class ProjectTranspilerPage extends PropertyPage {
 			}
 		});
 		
-		// right
+		// bottom
 		Composite right = new Composite(page, SWT.NONE);
 		right.setLayout(new FillLayout(SWT.HORIZONTAL));
 		GridData gd_right = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);

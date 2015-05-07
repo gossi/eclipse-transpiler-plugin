@@ -9,7 +9,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -26,6 +25,7 @@ import si.gos.transpiler.ui.controller.NonInstalledTranspilerController;
 import si.gos.transpiler.ui.controller.TranspilerController;
 
 public class InstalledTranspilerDialog extends Dialog {
+
 	private Text cmd;
 	private Text path;
 	private Text name;
@@ -60,12 +60,6 @@ public class InstalledTranspilerDialog extends Dialog {
 	public InstalledTranspilerDialog(Shell parentShell) {
 		super(parentShell);
 		transpiler = new InstalledTranspiler();
-		
-	}
-	
-	@Override
-	protected Point getInitialSize() {
-		return getShell().computeSize(400, SWT.DEFAULT);
 	}
 	
 	@Override
@@ -86,7 +80,9 @@ public class InstalledTranspilerDialog extends Dialog {
 		ComboViewer comboViewer = new ComboViewer(grid, SWT.READ_ONLY);
 		Combo combo = comboViewer.getCombo();
 		combo.setEnabled(!editing);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_combo.minimumWidth = 250;
+		combo.setLayoutData(gd_combo);
 		comboViewer.setLabelProvider(controller);
 		comboViewer.setContentProvider(controller);
 		comboViewer.setInput(TranspilerPlugin.getDefault().getTranspilerManager().getTranspilers());
